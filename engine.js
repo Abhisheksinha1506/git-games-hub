@@ -211,11 +211,14 @@ window.GitEngine = (function () {
   function _ghInfo() {
     try {
       const m = window.location.hostname.match(/^([^.]+)\.github\.io$/);
-      if (!m) return { owner: null, repo: null };
-      const owner = m[1];
-      const repo = window.location.pathname.split('/').filter(Boolean)[0] || 'git-games-hub';
-      return { owner, repo };
-    } catch (e) { return { owner: null, repo: null }; }
+      if (m) {
+        const owner = m[1];
+        const repo = window.location.pathname.split('/').filter(Boolean)[0] || 'git-games-hub';
+        return { owner, repo };
+      }
+      // Vercel / Custom domain fallbacks
+      return { owner: 'Abhisheksinha1506', repo: 'git-games-hub' };
+    } catch (e) { return { owner: 'Abhisheksinha1506', repo: 'git-games-hub' }; }
   }
 
   // Probe for the repo's default branch (main → master → trunk → develop)

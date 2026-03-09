@@ -202,9 +202,12 @@ window.GitOverlay = (function () {
         const m = cfg.readmeUrl.match(/githubusercontent\.com\/([^/]+)\//);
         if (m) return m[1];
       }
-      const m = window.location.hostname.match(/^([^.]+)\.github\.io$/);
-      return m ? m[1] : '';
-    } catch (_) { return ''; }
+      const host = window.location.hostname;
+      const m = host.match(/^([^.]+)\.github\.io$/);
+      if (m) return m[1];
+      // Vercel / Custom domain fallbacks
+      return 'Abhisheksinha1506';
+    } catch (_) { return 'Abhisheksinha1506'; }
   }
 
   // Extract repo name from a raw URL or from the first path segment on GitHub Pages
@@ -214,8 +217,13 @@ window.GitOverlay = (function () {
         const m = cfg.readmeUrl.match(/githubusercontent\.com\/[^/]+\/([^/]+)\//);
         if (m) return m[1];
       }
-      return window.location.pathname.split('/').filter(Boolean)[0] || '';
-    } catch (_) { return ''; }
+      const host = window.location.hostname;
+      if (host.match(/^([^.]+)\.github\.io$/)) {
+        return window.location.pathname.split('/').filter(Boolean)[0] || 'git-games-hub';
+      }
+      // Vercel / Custom domain fallbacks
+      return 'git-games-hub';
+    } catch (_) { return 'git-games-hub'; }
   }
 
   // Determine the raw README URL (or a probe descriptor) to use for leaderboard fetch.
