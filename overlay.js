@@ -238,12 +238,13 @@ window.GitOverlay = (function () {
       const m = host.match(/^([^.]+)\.github\.io$/);
       if (m) {
         const owner = m[1];
-        const repo = window.location.pathname.split('/').filter(Boolean)[0];
-        if (owner && repo) return { owner, repo }; // probe descriptor — branch resolved at fetch time
+        const repo = window.location.pathname.split('/').filter(Boolean)[0] || 'git-games-hub';
+        if (owner && repo) return { owner, repo };
       }
     } catch (_) { /* ignore */ }
 
-    return null; // local dev — no source available
+    // Vercel / Custom domain fallbacks
+    return { owner: 'Abhisheksinha1506', repo: 'git-games-hub' };
   }
 
   // Fetch README text, probing 'main' then 'master' for probe descriptors.
