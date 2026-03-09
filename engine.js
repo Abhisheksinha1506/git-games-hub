@@ -302,16 +302,10 @@ window.GitEngine = (function () {
       return `| 🏅 | @${u} | ${timeStr} | ${date} |`;
     }
 
-    // Build the PR URL or Direct Edit URL
+    // Build the PR URL asynchronously once we know the default branch
     async function _buildPrUrl(username) {
       if (!owner) return null;
       const u = _sanitizeUsername(username) || 'your-username';
-
-      // If the current user is recorded as the owner, give them a direct edit link
-      if (isOwner) {
-        return `https://github.com/${owner}/${repo}/edit/main/README.md`;
-      }
-
       const branch = await _detectDefaultBranch(owner, repo);
       const scoreRow = _buildScoreRow(u);
       const heading = README_HEADINGS[gameId] || gameTitle.replace(/^[^\w]+/, '').trim();
@@ -354,8 +348,6 @@ window.GitEngine = (function () {
     bd.className = 'ge-bd';
     bd.id = 'ge-backdrop';
 
-    const isOwner = (owner && owner.toLowerCase() === 'abhisheksinha1506');
-
     bd.innerHTML = `
       <div class="ge-box">
         <div class="ge-hd">
@@ -378,23 +370,18 @@ window.GitEngine = (function () {
           <div class="ge-lbl">Your Score Row (mandatory for leaderboard)</div>
           <div class="ge-score" id="ge-score-text">${_htmlEsc(_buildScoreRow(savedUser))}</div>
 
-          <div class="ge-lbl">How to update the Leaderboard</div>
+          <div class="ge-lbl">How to submit your score</div>
           <div class="ge-steps-box">
-            <div class="ge-step"><span class="ge-step-num">1.</span><span>Click <span class="cmd">COPY SCORE</span> below.</span></div>
-            ${isOwner ? `
-            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">EDIT README</span> — GitHub opens the editor for you.</span></div>
-            <div class="ge-step"><span class="ge-step-num">3.</span><span>Scroll to the <strong>${_htmlEsc(README_HEADINGS[gameId] || gameId)}</strong> table and paste your row.</span></div>
-            <div class="ge-step"><span class="ge-step-num">4.</span><span>Commit changes to <code>main</code>. 🎉</span></div>
-            ` : `
-            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">OPEN PR</span> — Ignore "Nothing to compare" and click <strong>Create Pull Request</strong>.</span></div>
-            <div class="ge-step"><span class="ge-step-num">3.</span><span>Once the PR is open, edit <code>README.md</code> in that PR and paste your row.</span></div>
-            <div class="ge-step"><span class="ge-step-num">4.</span><span>Submit PR. A maintainer will merge it. 🎉</span></div>
-            `}
+            <div class="ge-step"><span class="ge-step-num">1.</span><span>Enter your GitHub username above, then click <span class="cmd">UPDATE</span>.</span></div>
+            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">COPY SCORE</span> to copy your table row.</span></div>
+            <div class="ge-step"><span class="ge-step-num">3.</span><span>Click <span class="cmd">OPEN PR</span> — GitHub opens a pre-filled pull request in a new tab.</span></div>
+            <div class="ge-step"><span class="ge-step-num">4.</span><span>In the PR, edit <code>README.md</code> and paste your row into the <strong>${_htmlEsc(README_HEADINGS[gameId] || gameId)}</strong> leaderboard table.</span></div>
+            <div class="ge-step"><span class="ge-step-num">5.</span><span>Submit the PR — CI checks the row format, then the maintainer merges it. 🎉</span></div>
           </div>
 
           <div class="ge-btns">
             <button class="ge-btn" id="ge-copy-btn">📋 COPY SCORE</button>
-            <button class="ge-btn" id="ge-pr-btn">${isOwner ? '📝 EDIT README ↗' : '🚀 OPEN PR ↗'}</button>
+            <button class="ge-btn" id="ge-pr-btn">🚀 OPEN PR ↗</button>
             <button class="ge-btn" id="ge-hub-btn">🏠 EXIT TO HUB</button>
             <button class="ge-btn sec" id="ge-close-btn">✕ CLOSE</button>
           </div>
