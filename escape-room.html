@@ -371,7 +371,7 @@
       },
       {
         id: 'room4', name: 'The Exit', file: 'room4.txt', keyword: 'liberty', hint: 'What you gain when you escape',
-        content: 'EXIT PROTOCOL\n==============\nAll rooms must be unlocked.\nFinal word to freedom: liberty\n\nCollect it with:\ngit grep "liberty" -- "room4.txt"'
+        content: 'EXIT PROTOCOL\n==============\nAll rooms must be unlocked.\nFinal word to freedom: liberty\n\nSearch for the word "liberty" in this file to find the final key.'
       },
     ];
 
@@ -383,15 +383,14 @@
         check: cmd => cmd.trim() === 'git ls-files'
       },
       ...ROOMS.map(r => ({
-        label: 'git grep "' + r.keyword + '" -- "' + r.file + '"',
-        prompt: 'Find the key in ' + r.name + ': git grep "' + r.keyword + '" -- "' + r.file + '"',
-        hint: 'Hint for this room: ' + r.hint + '. Try: git grep "' + r.keyword + '" -- "' + r.file + '"',
-        cmd_example: 'git grep "' + r.keyword + '" -- "' + r.file + '"',
+        label: 'Unlock ' + r.name,
+        prompt: 'Search ' + r.name + ' (' + r.file + ') for the key: ' + r.hint,
+        hint: 'Try searching the file for the keyword using git grep.',
+        cmd_example: 'git grep "keyword" -- "file"',
         success_msg: 'Key found: "' + r.keyword + '" — ' + r.name + ' unlocked!',
-        wrong_msg: 'That grep did not find the key. Try: git grep "' + r.keyword + '" -- "' + r.file + '"',
+        wrong_msg: 'That command did not find the key. Did you use the correct keyword and filename?',
         check: cmd => {
           const kw = r.keyword, fl = r.file;
-          // Accept both 'room1.txt' and 'room1' but require exact file token match
           const hasFile = cmd.includes(fl) || new RegExp('(?:^|\\s|--|["\'])' + fl.replace('.txt', '') + '(?:["\']|\\s|$)').test(cmd);
           return cmd.includes('git grep') && cmd.toLowerCase().includes(kw) && hasFile;
         },

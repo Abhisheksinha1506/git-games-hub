@@ -661,13 +661,12 @@
         <div class="cfsec">
           <div class="cfl">Navigating Addresses</div>
           <div class="cfb">Streets = <strong style="color:var(--lime)">git tags</strong>. House N = <strong
-              style="color:var(--cyan)">Nth ancestor</strong>:</div>
-          <div class="cfc">git show &lt;street-tag&gt;~N</div>
+              style="color:var(--cyan)">Nth ancestor</strong> using the tilde (~N) notation.</div>
         </div>
         <div class="cfsec">
           <div class="cfl">Verify Answer</div>
-          <div class="cfc">echo "Full Name" | git hash-object --stdin | grep -iq -f /dev/stdin &lt;(git show solution)
-            &amp;&amp; echo 'You found the murderer!' || echo 'No cigar...'</div>
+          <div class="cfb">Pipe your suspect's name into <code style="color:var(--cyan)">git hash-object --stdin</code>
+            and compare it to the <strong style="color:var(--lime)">solution</strong> object.</div>
         </div>
       </div>
 
@@ -732,13 +731,13 @@
     ];
 
     const HINTS = [
-      { t: 'HINT 1 — Finding the report', b: "The crime scene report is on the <strong>gtpd-archive</strong> branch. Det. Pumbinner filed it the week after Sat Jul 20 — that's Jul 21–27, 1991.", c: 'git log gtpd-archive --oneline --author="Kyle Pumbinner" --after="1991-07-20" --before="1991-07-28"' },
-      { t: 'HINT 2 — Reading the report', b: 'Once you have the commit hash, view the full report.', c: 'git show 7d4a159' },
-      { t: 'HINT 3 — Finding the street tag', b: 'A witness lives on Larch Walk. Streets are git tags.', c: 'git tag | grep larch' },
-      { t: 'HINT 4 — Navigating to the house', b: 'The tag points to house #1 (tip). Use tilde to go back N commits.', c: 'git show larch-walk~41' },
-      { t: 'HINT 5 — Following the chain', b: 'The first witness names another. Find their street tag and house number.', c: 'git show glendale~38' },
-      { t: 'HINT 6 — Confirming the suspect', b: 'The second witness names the murderer and their address.', c: 'git show badgers-dene~36' },
-      { t: 'HINT 7 — Checking your answer', b: 'Use the verification command with your suspect\'s full name.', c: 'echo "…their full name…" | git hash-object --stdin | grep -iq -f /dev/stdin &lt;(git show solution) &amp;&amp; echo \'You found the murderer!\' || echo \'No cigar...\'' },
+      { t: 'HINT 1 — Finding the report', b: "Search the <strong>gtpd-archive</strong> branch for commits by Pumbinner in late July 1991.", c: 'git log --author="..." --after="..."' },
+      { t: 'HINT 2 — Reading the report', b: 'Use the commit hash to view the full details of the homicide report.', c: 'git show &lt;hash&gt;' },
+      { t: 'HINT 3 — Finding the street tag', b: 'A witness lives on Larch Walk. Search for a tag matching that name.', c: 'git tag | grep ...' },
+      { t: 'HINT 4 — Navigating to the house', b: 'The tag points to the street. Use the ancestor notation (~N) to find house #41.', c: 'git show tag~N' },
+      { t: 'HINT 5 — Following the chain', b: 'Find the resident record for Glendale #38 using what you learned.', c: 'git show tag~N' },
+      { t: 'HINT 6 — Confirming the suspect', b: 'The suspect lives at 36 Badgers Dene. Look up that record.', c: 'git show tag~N' },
+      { t: 'HINT 7 — Checking your answer', b: 'Construct a verification command using the suspect\'s name and the solution object.', c: 'echo "Name" | git hash-object ...' },
     ];
 
     // Stable localStorage key (no year suffix)

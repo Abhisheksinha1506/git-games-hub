@@ -359,18 +359,18 @@
     const STEPS = [];
     PATHS.forEach(p => {
       STEPS.push({
-        label: 'Create branch: ' + p.name,
-        prompt: 'Create the branch named ' + p.name,
-        hint: 'Type exactly: git branch ' + p.name,
-        cmd_example: 'git branch ' + p.name,
-        success_msg: "Branch '" + p.name + "' created! Quest: " + p.lore,
-        check: cmd => cmd.trim() === 'git branch ' + p.name,
+        label: 'Switch branch',
+        prompt: 'Switch to the branch named ' + p.name + ' to find the rune.',
+        hint: 'Use the git checkout command with the branch name.',
+        cmd_example: 'git checkout <branch>',
+        success_msg: "Reached the branch '" + p.name + "'! Quest: " + p.lore,
+        check: cmd => cmd.trim() === 'git checkout ' + p.name,
       });
       STEPS.push({
-        label: 'Merge branch: ' + p.name,
-        prompt: 'Now merge ' + p.name + ' into the current branch',
-        hint: 'Type exactly: git merge ' + p.name,
-        cmd_example: 'git merge ' + p.name,
+        label: 'Merge progress',
+        prompt: 'Now merge the findings from ' + p.name + ' into the main branch.',
+        hint: 'Switch back to main and use the git merge command.',
+        cmd_example: 'git merge <branch>',
         success_msg: "Merged '" + p.name + "'! Boss took " + p.dmg + " damage.",
         check: cmd => cmd.trim() === 'git merge ' + p.name,
       });
@@ -440,9 +440,9 @@
     GitOverlay.init({
       gameId: 'branch-quest', title: '🌿 Branch Quest Adventure', tagline: 'RPG boss fight powered by Git branching',
       objective: 'Create ' + PATHS.length + ' named branches and merge each back into main to deal damage to the dungeon boss. Drain the boss HP from ' + BOSS_MAX_HP + ' to 0.',
-      howToPlay: ['Type <code>git branch &lt;path-name&gt;</code> to create each quest path.', 'Immediately after creating a branch, type <code>git merge &lt;path-name&gt;</code> to deal damage.', 'Each of the ' + PATHS.length + ' paths must be created and merged in the order shown in the Steps panel.', 'Wrong command? You will get an error and hint — the step does not advance.', 'Complete all ' + STEPS.length + ' steps (' + PATHS.length + ' create + ' + PATHS.length + ' merge) to slay the boss and stop the clock.'],
-      commands: [{ cmd: 'git branch &lt;name&gt;', desc: 'Create a new branch named &lt;name&gt;' }, { cmd: 'git merge &lt;name&gt;', desc: 'Merge &lt;name&gt; into current branch, dealing boss damage' }, { cmd: 'git branch', desc: 'List all existing branches' }, { cmd: 'hint', desc: 'Show the exact command needed for the current step' }],
-      tips: ['Use ↑/↓ arrow keys to cycle through your command history.', 'Branches must be done in order: ' + pathOrder + '.', 'You must create a branch before you can merge it — no skipping.', 'Type <code>hint</code> at any point if you are stuck.', 'Boss HP colour changes from red → orange → green as it drops.'],
+      howToPlay: ['Type <code>git checkout</code> with a branch name to switch to a quest path.', 'Immediately after switching, merge the quest findings back into main to deal damage.', 'Each path must be conquered in the order shown in the side panel.', 'Wrong command? You will get a nudge — the step does not advance.', 'Complete all ' + STEPS.length + ' steps to slay the boss and stop the clock.'],
+      commands: [{ cmd: 'git checkout &lt;name&gt;', desc: 'Switch to a branch' }, { cmd: 'git merge &lt;name&gt;', desc: 'Merge a branch into main, dealing boss damage' }, { cmd: 'git branch', desc: 'List all branches' }, { cmd: 'hint', desc: 'Get a nudge' }],
+      tips: ['Use ↑/↓ arrow keys to cycle through your command history.', 'Path branches must be completed in chronological order.', 'You must switch to a branch before you can merge its findings.', 'Type <code>hint</code> at any point if you are stuck.', 'Boss HP colour changes from red → orange → green as it drops.'],
       scoring: 'The timer starts when the page loads. It stops automatically the moment the final merge is accepted. Your total elapsed time (MM:SS) is your score — lower is better.',
     });
 
