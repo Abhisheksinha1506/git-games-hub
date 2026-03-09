@@ -282,20 +282,6 @@ window.GitEngine = (function () {
       return `| 🏅 | @${u} | ${timeStr} | ${date} |`;
     }
 
-    // Build the Automated Submission URL (using GitHub Issues as a form)
-    function _buildPrUrl(username) {
-      if (!owner) return null;
-      const u = _sanitizeUsername(username) || 'your-username';
-      const scoreRow = _buildScoreRow(u);
-
-      const title = encodeURIComponent(`[Score Submission] ${gameId}`);
-      const body = encodeURIComponent(scoreRow);
-      // We use a specific label so the GitHub Action can target these issues
-      const labels = encodeURIComponent('score-submission');
-
-      return `https://github.com/${owner}/${repo}/issues/new?title=${title}&body=${body}&labels=${labels}`;
-    }
-
     // HTML-escape a string for safe injection into attribute values or text content
     function _htmlEsc(s) {
       return String(s)
@@ -335,9 +321,8 @@ window.GitEngine = (function () {
           <div class="ge-lbl">How to submit your score</div>
           <div class="ge-steps-box">
             <div class="ge-step"><span class="ge-step-num">1.</span><span>Enter your GitHub username above, then click <span class="cmd">UPDATE</span>.</span></div>
-            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">SUBMIT SCORE</span> — GitHub opens a pre-filled submission page in a new tab.</span></div>
-            <div class="ge-step"><span class="ge-step-num">3.</span><span>Click <strong>Submit new issue</strong> on GitHub.</span></div>
-            <div class="ge-step"><span class="ge-step-num">4.</span><span>That's it! Our bot will automatically update the leaderboard for you. 🤖</span></div>
+            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">SUBMIT SCORE</span> below.</span></div>
+            <div class="ge-step"><span class="ge-step-num">3.</span><span>That's it! The leaderboard updates automatically and you'll return to the hub. 🚀</span></div>
           </div>
 
           <div class="ge-btns">
@@ -352,7 +337,7 @@ window.GitEngine = (function () {
 
     document.body.appendChild(bd);
 
-    // Helper: refresh submission link from current username input.
+    // Helper: refresh submission button from current username input.
     async function _refresh() {
       const inputEl = document.getElementById('ge-uinput');
       if (!inputEl) return;
@@ -366,19 +351,58 @@ window.GitEngine = (function () {
       const prBtn = document.getElementById('ge-pr-btn');
       if (!prBtn) return;
 
-      const url = _buildPrUrl(u);
-      if (url) {
-        prBtn.onclick = () => {
-          // 1. Open submission in new tab
-          window.open(url, '_blank');
-          // 2. Immediately close modal and go to hub
-          bd.remove();
-          document.removeEventListener('keydown', onKey);
-          window.location.href = 'index.html';
-        };
-        prBtn.disabled = false;
-        prBtn.style.opacity = '1';
-      }
+      prBtn.onclick = async () => {
+        if (!u) { alert('Please enter a username first!'); return; }
+
+        prBtn.disabled = true;
+        prBtn.textContent = '⏳ SUBMITTING...';
+        prBtn.style.opacity = '0.5';
+
+        try {
+          const res = await fetch('/api/submit-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gameId,
+              username: u,
+              time: timeStr,
+              date
+            })
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || 'Submission failed');
+          }
+
+          // Success State
+          prBtn.textContent = '✅ SUCCESS!';
+          prBtn.style.background = '#a8ff3e';
+          prBtn.style.color = '#000';
+
+          const note = document.getElementById('ge-pr-note');
+          if (note) note.textContent = 'Refreshing to hub in 2s...';
+
+          setTimeout(() => {
+            bd.remove();
+            document.removeEventListener('keydown', onKey);
+            window.location.href = 'index.html';
+          }, 2000);
+
+        } catch (e) {
+          console.error(e);
+          prBtn.disabled = false;
+          prBtn.textContent = '❌ RETRY';
+          prBtn.style.opacity = '1';
+          const note = document.getElementById('ge-pr-note');
+          if (note) {
+            note.style.color = '#ff4f6d';
+            note.textContent = `Error: ${e.message}`;
+          }
+        }
+      };
+      prBtn.disabled = false;
+      prBtn.style.opacity = '1';
     }
 
     // Initial render — async, but errors are caught internally
