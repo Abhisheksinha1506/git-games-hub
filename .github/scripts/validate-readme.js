@@ -117,16 +117,19 @@ for (const game of GAMES) {
   // Sort by time ascending (fastest first)
   rows.sort((a, b) => a.secs - b.secs);
 
+  // Keep only top 3
+  const topRows = rows.slice(0, 3);
+
   // Rebuild section
   let newSection = '\n';
-  if (rows.length === 0) {
+  if (topRows.length === 0) {
     newSection += `| Rank | Player | Time | Date |\n`;
     newSection += `|------|--------|------|------|\n`;
     newSection += `| 🥇 | _no scores yet_ | — | — |\n`;
   } else {
     newSection += `| Rank | Player | Time | Date |\n`;
     newSection += `|------|--------|------|------|\n`;
-    rows.forEach((r, i) => {
+    topRows.forEach((r, i) => {
       newSection += `| ${rankIcon(i)} | @${r.username} | ${r.time} | ${r.date} |\n`;
     });
   }
