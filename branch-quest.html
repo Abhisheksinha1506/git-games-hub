@@ -226,19 +226,20 @@
 
     .sp-head {
       font-family: var(--font-serif);
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: #ffffff;
+      font-size: 15px;
+      letter-spacing: 3px;
+      color: var(--cyan);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .boss-bar {
-      height: 8px;
+      height: 12px;
       background: #0a0c14;
-      border-radius: 2px;
-      margin-top: 6px;
+      border-radius: 4px;
+      margin-top: 8px;
       overflow: hidden;
+      border: 1px solid var(--brd);
     }
 
     .boss-fill {
@@ -247,39 +248,52 @@
       border-radius: 2px;
     }
 
+    #boss-hp-txt {
+      font-family: var(--font-serif);
+      font-size: 18px !important;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
     #branch-graph {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 6px;
+      gap: 6px;
+      margin-top: 8px;
     }
 
     .bnode {
-      padding: 4px 10px;
+      padding: 6px 14px;
       background: #0a0c14;
       border: 1px solid var(--brd);
       font-family: var(--font-serif);
-      font-size: 13px;
+      font-size: 16px;
+      font-weight: 700;
       color: var(--lime);
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
     .bnode.cur {
       border-color: var(--cyan);
       color: var(--cyan);
+      background: rgba(0, 212, 255, 0.05);
     }
 
     .sp-cmd-ref {
-      padding: 10px 12px;
+      padding: 14px 16px;
       font-family: var(--font-serif);
-      font-size: 12px;
+      font-size: 15px;
       color: #ffffff;
-      line-height: 1.9;
+      line-height: 2.2;
       flex: 1;
     }
 
     .sp-cmd-ref span {
+      font-family: var(--font-mono);
       color: var(--lime);
+      background: rgba(168, 255, 62, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
     }
   </style>
 </head>
