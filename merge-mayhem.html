@@ -218,14 +218,16 @@
     }
 
     .gp-label {
-      font-size: 9px;
+      font-family: var(--font-serif);
+      font-size: 12px;
       letter-spacing: 2px;
       color: #ffffff;
       text-transform: uppercase;
     }
 
     .gp-val {
-      font-size: 18px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       color: var(--amber);
       font-weight: bold;
     }
@@ -267,7 +269,8 @@
     .cb-head {
       background: #1a1f2a;
       padding: 6px 10px;
-      font-size: 10px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       display: flex;
       justify-content: space-between;
     }
@@ -286,7 +289,8 @@
 
     .cb-body {
       padding: 8px 10px;
-      font-size: 10px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       line-height: 1.8;
     }
 
@@ -315,8 +319,9 @@
       border: 1px solid var(--brd);
       background: transparent;
       color: var(--txt);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 9px;
+      font-family: var(--font-serif);
+      font-size: 11px;
+      font-weight: bold;
       cursor: pointer;
       transition: all .2s;
       text-align: center;
@@ -340,7 +345,7 @@
 
     .sp-head {
       font-family: var(--font-serif);
-      font-size: 15px;
+      font-size: 12px;
       letter-spacing: 3px;
       color: var(--amber);
       text-transform: uppercase;
@@ -389,7 +394,7 @@
           <span style="color:var(--amber);">git merge feature-branch</span><br>to start Wave 1.
         </div>
       </div>
-      <div class="step-panel">
+      <div class="step-panel" style="display:none;">
         <div class="sp-head">📋 Waves</div>
         <div id="step-list"></div>
       </div>

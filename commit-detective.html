@@ -220,7 +220,7 @@
 
     .sp-head {
       font-family: var(--font-serif);
-      font-size: 15px;
+      font-size: 12px;
       letter-spacing: 3px;
       color: var(--cyan);
       text-transform: uppercase;
@@ -230,7 +230,8 @@
     .clue {
       padding: 10px 12px;
       border-bottom: 1px solid var(--brd);
-      font-size: 13px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       color: var(--txt);
       line-height: 1.6;
     }
@@ -275,7 +276,7 @@
     .sp-cmd-ref {
       padding: 14px 16px;
       font-family: var(--font-serif);
-      font-size: 14px;
+      font-size: 11px;
       color: #ffffff;
       line-height: 2.2;
     }
@@ -312,7 +313,7 @@
           spellcheck="false" placeholder="type a git command…" maxlength="512"></div>
     </div>
     <div class="sp">
-      <div class="sp-section" style="flex:1;overflow-y:auto;">
+      <div class="sp-section" style="flex:1;overflow-y:auto;display:none;">
         <div class="sp-head">📋 Steps</div>
         <div id="step-list"></div>
       </div>

@@ -214,7 +214,7 @@
 
     .gph {
       font-family: var(--font-serif);
-      font-size: 15px;
+      font-size: 12px;
       letter-spacing: 3px;
       color: var(--amber);
       text-transform: uppercase;
@@ -239,13 +239,16 @@
     }
 
     .room-name {
-      font-size: 10px;
+      font-family: var(--font-serif);
+      font-size: 11px;
+      font-weight: 700;
       color: var(--amber);
       margin-bottom: 2px;
     }
 
     .room-status {
-      font-size: 9px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       letter-spacing: 1px;
     }
 
@@ -258,7 +261,8 @@
     }
 
     .room-hint {
-      font-size: 9px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       color: #ffffff;
       margin-top: 3px;
       font-style: italic;
@@ -269,7 +273,8 @@
       padding: 2px 8px;
       border: 1px solid var(--green);
       background: rgba(61, 186, 94, .07);
-      font-size: 9px;
+      font-family: var(--font-serif);
+      font-size: 11px;
       color: var(--green);
       border-radius: 1px;
       margin: 2px;
@@ -320,12 +325,12 @@
         <div class="gph">🔑 Keys</div>
         <div id="keys-display"><span style="font-size:10px;color:#ffffff;font-style:italic;">None yet.</span></div>
       </div>
-      <div class="gp-section" style="flex:1;overflow-y:auto;">
+      <div class="gp-section" style="flex:1;overflow-y:auto;display:none;">
         <div class="gph">📋 Steps</div>
         <div id="step-list"></div>
       </div>
       <div class="sp-cmd-ref"
-        style="padding:14px 16px;font-family:var(--font-serif);font-size:14px;color:#ffffff;line-height:2.2;">
+        style="padding:14px 16px;font-family:var(--font-serif);font-size:11px;color:#ffffff;line-height:2.2;">
         <div
           style="color:var(--amber);margin-bottom:8px;font-family:var(--font-serif);letter-spacing:1px;font-size:12px;">
           COMMANDS</div>

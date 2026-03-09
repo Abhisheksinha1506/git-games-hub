@@ -320,8 +320,8 @@
     .tb {
       flex: 1;
       padding: 9px 2px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
       letter-spacing: .5px;
       color: #ffffff;
       cursor: pointer;
@@ -364,16 +364,17 @@
 
     .cft {
       font-family: 'Syne', sans-serif;
-      font-size: 17px;
+      font-size: 12px;
       color: var(--cyan);
       margin-bottom: 3px;
+      letter-spacing: 2px;
     }
 
     .cfs {
       font-family: 'Syne', sans-serif;
       font-style: italic;
       color: #ffffff;
-      font-size: 12px;
+      font-size: 11px;
       padding-bottom: 11px;
       margin-bottom: 11px;
       border-bottom: 1px solid var(--brd);
@@ -384,7 +385,8 @@
     }
 
     .cfl {
-      font-size: 11px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
       letter-spacing: 2px;
       color: var(--cyan);
       text-transform: uppercase;
@@ -395,7 +397,7 @@
     .cfb {
       font-family: 'Syne', sans-serif;
       color: var(--txt);
-      font-size: 12.5px;
+      font-size: 11px;
       line-height: 1.85;
     }
 
@@ -404,7 +406,7 @@
       border: 1px solid var(--brd);
       padding: 6px 10px;
       color: var(--cyan);
-      font-size: 10.5px;
+      font-size: 11px;
       margin-top: 7px;
       font-family: 'JetBrains Mono', monospace;
       word-break: break-all;
@@ -445,7 +447,8 @@
     }
 
     .pt {
-      font-size: 11.5px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
       color: #ffffff;
       transition: color .4s;
     }
@@ -471,7 +474,8 @@
       padding: 8px 12px;
       background: rgba(176, 154, 248, .04);
       color: var(--purple);
-      font-size: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
       letter-spacing: .8px;
       cursor: pointer;
       display: flex;
@@ -496,7 +500,8 @@
     .hb {
       padding: 10px 12px;
       color: var(--txt);
-      font-size: 11.5px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
       line-height: 1.7;
       display: none;
       background: rgba(0, 0, 0, .2);
@@ -512,7 +517,7 @@
       padding: 5px 9px;
       margin-top: 7px;
       color: var(--cyan);
-      font-size: 10.5px;
+      font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
       word-break: break-all;
     }
@@ -640,7 +645,7 @@
     <div class="sp">
       <div class="tabs">
         <button class="tb on" id="tab-btn-case">📋 CASE</button>
-        <button class="tb" id="tab-btn-prog">✓ PROGRESS</button>
+        <button class="tb" id="tab-btn-prog" style="display:none;">✓ PROGRESS</button>
         <button class="tb" id="tab-btn-hints">💡 HINTS</button>
         <button class="tb" id="tab-btn-graph">🌿 GRAPH</button>
       </div>
