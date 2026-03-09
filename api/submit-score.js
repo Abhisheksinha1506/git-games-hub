@@ -77,10 +77,13 @@ export default async function handler(req, res) {
         // Sort fastest first
         rows.sort((a, b) => a.secs - b.secs);
 
+        // Keep only top 3
+        const topRows = rows.slice(0, 3);
+
         // Rebuild section
         let newSection = '\n| Rank | Player | Time | Date |\n|------|--------|------|------|\n';
         const MEDALS = ['🥇', '🥈', '🥉'];
-        rows.forEach((r, i) => {
+        topRows.forEach((r, i) => {
             const icon = MEDALS[i] || `\`${i + 1}\``;
             newSection += r.raw.replace(/^\|\s*[^|]+\s*\|/, `| ${icon} |`) + '\n';
         });
