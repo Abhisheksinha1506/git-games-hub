@@ -87,18 +87,12 @@
 
 ## 📥 Submitting Your Score
 
-When you complete a game, the **GAME COMPLETE** modal appears automatically with your time. Here's how to get on the leaderboard:
+When you complete a game, the **GAME COMPLETE** modal appears automatically. We've automated the leaderboard process:
 
-1. Enter your GitHub username in the modal
-2. Click **COPY SCORE** — your formatted row is copied
-3. Click **OPEN PR** — GitHub opens a pre-filled pull request
-4. In the PR editor, paste your row into the correct leaderboard table above
-5. Submit the PR — CI validates the format, then a maintainer merges it
-
-**Score row format:**
-```
-| 🏅 | @your-username | MM:SS | YYYY-MM-DD |
-```
+1. Enter your GitHub username in the modal.
+2. Click **SUBMIT SCORE** — a new tab opens with a pre-filled GitHub submission.
+3. Click **Submit new issue** on GitHub.
+4. **Done!** Our bot automatically creates a PR, updates the leaderboard, and closes the submission for you. 🤖
 
 ---
 
