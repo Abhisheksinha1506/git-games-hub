@@ -30,7 +30,7 @@
 <!-- LEADERBOARD:murder -->
 | Rank | Player | Time | Date |
 |------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
+| 🥇 | @TestGitMurder | 01:21 | 2026-03-09 |
 <!-- END:murder -->
 
 ---
