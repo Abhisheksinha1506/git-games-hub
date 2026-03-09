@@ -2,7 +2,7 @@
 
 > **Learn Git the fun way** — six browser-based interactive challenges, each teaching a different Git concept through gameplay. No install required. Pure HTML + JS.
 
-🔗 **Play now:** `https://YOUR_USERNAME.github.io/git-games-hub/`
+🔗 **Play now:** `https://Abhisheksinha1506.github.io/git-games-hub/`
 
 ---
 
