@@ -302,6 +302,8 @@ window.GitOverlay = (function () {
       }
       // End of section — any subsequent H2 or H3
       if (inSection && /^#{2,3}\s/.test(t) && !t.includes(headingFragment)) break;
+      // also stop if we hit another HTML comment that isn't ours, though the heading check usually catches it
+      if (inSection && t.startsWith('<!-- END:')) break;
       if (!inSection) continue;
 
       if (t.startsWith('|')) {
