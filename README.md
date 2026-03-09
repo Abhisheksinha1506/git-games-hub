@@ -50,7 +50,7 @@
 <!-- LEADERBOARD:commit-detective -->
 | Rank | Player | Time | Date |
 |------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
+| 🥇 | @Test | 00:59 | 2026-03-09 |
 <!-- END:commit-detective -->
 
 ---
