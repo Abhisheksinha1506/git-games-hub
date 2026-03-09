@@ -465,7 +465,7 @@ window.GitOverlay = (function () {
               📄 View README leaderboard on GitHub ↗
             </a>
             <a class="go-lb-source-link" id="go-submit-link" href="#" target="_blank" rel="noopener">
-              ${_repoOwner(_cfg).toLowerCase() === 'abhisheksinha1506' ? '📝 EDIT README (Owner) ↗' : '🚀 Submit your score via PR ↗'}
+              🚀 Submit your score via PR ↗
             </a>
           </div>
         </div>
