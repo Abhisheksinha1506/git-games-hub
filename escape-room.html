@@ -213,11 +213,12 @@
     }
 
     .gph {
-      font-size: 9px;
-      letter-spacing: 2px;
-      color: #ffffff;
+      font-family: var(--font-serif);
+      font-size: 15px;
+      letter-spacing: 3px;
+      color: var(--amber);
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .room-grid {
@@ -323,13 +324,26 @@
         <div class="gph">📋 Steps</div>
         <div id="step-list"></div>
       </div>
-      <div style="padding:10px 16px;font-size:10px;color:#ffffff;line-height:1.9;">
-        <div style="color:var(--amber);margin-bottom:4px;">COMMANDS</div>
-        <div>git ls-files — see all files</div>
-        <div>git grep "word" -- "file.txt"</div>
-        <div>git show room1.txt — read file</div>
-        <div>hint — get a nudge</div>
-        <div>clear — clear terminal</div>
+      <div class="sp-cmd-ref"
+        style="padding:14px 16px;font-family:var(--font-serif);font-size:14px;color:#ffffff;line-height:2.2;">
+        <div
+          style="color:var(--amber);margin-bottom:8px;font-family:var(--font-serif);letter-spacing:1px;font-size:12px;">
+          COMMANDS</div>
+        <div
+          style="font-family:var(--font-mono);color:var(--green);background:rgba(61,186,94,0.1);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px;">
+          git ls-files</div> — see all files<br>
+        <div
+          style="font-family:var(--font-mono);color:var(--green);background:rgba(61,186,94,0.1);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px;">
+          git grep "word" -- "file.txt"</div><br>
+        <div
+          style="font-family:var(--font-mono);color:var(--green);background:rgba(61,186,94,0.1);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px;">
+          git show room1.txt</div> — read file<br>
+        <div
+          style="font-family:var(--font-mono);color:var(--green);background:rgba(61,186,94,0.1);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px;">
+          hint</div> — get a nudge<br>
+        <div
+          style="font-family:var(--font-mono);color:var(--green);background:rgba(61,186,94,0.1);padding:2px 6px;border-radius:3px;display:inline-block;margin-bottom:4px;">
+          clear</div> — clear terminal
       </div>
     </div>
   </div>
