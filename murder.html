@@ -819,8 +819,25 @@
       if (lc === 'help' || lc === 'git help') { doHelp(); scrl(); return; }
       if (lc === 'hint') { doHint(); scrl(); return; }
       if (lc === 'ls') { ln('o', 'reports/  residents/  solution  instructions.txt'); scrl(); return; }
-      if (cmd.includes('git hash-object') && cmd.includes('git show solution')) { doSolve(cmd); scrl(); return; }
-      if (!cmd.startsWith('git') && !cmd.startsWith('echo')) { ln('e', `bash: ${cmd.split(' ')[0]}: command not found`); ln('lm', "Type 'help' for a list of commands."); scrl(); return; }
+
+      // Verification logic: handle the solution command (flexible check)
+      if ((cmd.includes('echo') && cmd.includes('git hash-object')) || (cmd.includes('solution') && cmd.includes('Bruno'))) {
+        doSolve(cmd); scrl(); return;
+      }
+
+      if (cmd.startsWith('echo ')) {
+        const m = cmd.match(/echo\s+["']?([^"']+)["']?/);
+        if (m) ln('o', m[1]);
+        else ln('o', cmd.slice(5));
+        scrl(); return;
+      }
+
+      if (!cmd.startsWith('git ')) {
+        ln('e', `bash: ${cmd.split(' ')[0]}: command not found`);
+        ln('lm', "Type 'help' for a list of commands.");
+        scrl(); return;
+      }
+
       const parts = cmd.split(/\s+/), sub = parts[1];
       switch (sub) {
         case 'clone': doClone(cmd); break;
