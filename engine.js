@@ -221,26 +221,6 @@ window.GitEngine = (function () {
     } catch (e) { return { owner: 'Abhisheksinha1506', repo: 'git-games-hub' }; }
   }
 
-  // Probe for the repo's default branch (main → master → trunk → develop)
-  // Returns the branch name string, or 'main' as safe fallback.
-  const _DEFAULT_BRANCH_CACHE = {};
-  async function _detectDefaultBranch(owner, repo) {
-    const key = `${owner}/${repo}`;
-    if (_DEFAULT_BRANCH_CACHE[key]) return _DEFAULT_BRANCH_CACHE[key];
-    const candidates = ['main', 'master', 'trunk', 'develop'];
-    for (const b of candidates) {
-      try {
-        const r = await fetch(
-          `https://raw.githubusercontent.com/${owner}/${repo}/${b}/README.md`,
-          { method: 'HEAD' }
-        );
-        if (r.ok) { _DEFAULT_BRANCH_CACHE[key] = b; return b; }
-      } catch (_) { /* ignore fetch errors for probes */ }
-    }
-    _DEFAULT_BRANCH_CACHE[key] = 'main';
-    return 'main';
-  }
-
   // ── Persistent username storage (localStorage with graceful in-memory fallback) ──
   const _memStore = {};
   const _storage = {
@@ -302,36 +282,18 @@ window.GitEngine = (function () {
       return `| 🏅 | @${u} | ${timeStr} | ${date} |`;
     }
 
-    // Build the PR URL asynchronously once we know the default branch
-    async function _buildPrUrl(username) {
+    // Build the Automated Submission URL (using GitHub Issues as a form)
+    function _buildPrUrl(username) {
       if (!owner) return null;
       const u = _sanitizeUsername(username) || 'your-username';
-      const branch = await _detectDefaultBranch(owner, repo);
       const scoreRow = _buildScoreRow(u);
-      const heading = README_HEADINGS[gameId] || gameTitle.replace(/^[^\w]+/, '').trim();
-      const body = [
-        '## 🏆 Score Submission',
-        '',
-        `**Game:** ${gameTitle}`,
-        `**Player:** @${u}`,
-        `**Time:** \`${timeStr}\``,
-        `**Date:** ${date}`,
-        '',
-        '### Instructions for maintainer',
-        `Add the following row to the **${heading}** leaderboard table in \`README.md\`:`,
-        '',
-        '```',
-        scoreRow,
-        '```',
-        '',
-        '> _CI will verify the row format automatically._',
-      ].join('\n');
-      return (
-        `https://github.com/${owner}/${repo}/compare/${branch}...score-entry/${u}` +
-        `?quick_pull=1` +
-        `&title=${encodeURIComponent('[Score] ' + gameId + ' — @' + u + ' — ' + timeStr)}` +
-        `&body=${encodeURIComponent(body)}`
-      );
+
+      const title = encodeURIComponent(`[Score Submission] ${gameId}`);
+      const body = encodeURIComponent(scoreRow);
+      // We use a specific label so the GitHub Action can target these issues
+      const labels = encodeURIComponent('score-submission');
+
+      return `https://github.com/${owner}/${repo}/issues/new?title=${title}&body=${body}&labels=${labels}`;
     }
 
     // HTML-escape a string for safe injection into attribute values or text content
@@ -373,56 +335,49 @@ window.GitEngine = (function () {
           <div class="ge-lbl">How to submit your score</div>
           <div class="ge-steps-box">
             <div class="ge-step"><span class="ge-step-num">1.</span><span>Enter your GitHub username above, then click <span class="cmd">UPDATE</span>.</span></div>
-            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">COPY SCORE</span> to copy your table row.</span></div>
-            <div class="ge-step"><span class="ge-step-num">3.</span><span>Click <span class="cmd">OPEN PR</span> — GitHub opens a pre-filled pull request in a new tab.</span></div>
-            <div class="ge-step"><span class="ge-step-num">4.</span><span>In the PR, edit <code>README.md</code> and paste your row into the <strong>${_htmlEsc(README_HEADINGS[gameId] || gameId)}</strong> leaderboard table.</span></div>
-            <div class="ge-step"><span class="ge-step-num">5.</span><span>Submit the PR — CI checks the row format, then the maintainer merges it. 🎉</span></div>
+            <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">SUBMIT SCORE</span> — GitHub opens a pre-filled submission page in a new tab.</span></div>
+            <div class="ge-step"><span class="ge-step-num">3.</span><span>Click <strong>Submit new issue</strong> on GitHub.</span></div>
+            <div class="ge-step"><span class="ge-step-num">4.</span><span>That's it! Our bot will automatically update the leaderboard for you. 🤖</span></div>
           </div>
 
           <div class="ge-btns">
-            <button class="ge-btn" id="ge-copy-btn">📋 COPY SCORE</button>
-            <button class="ge-btn" id="ge-pr-btn">🚀 OPEN PR ↗</button>
-            <button class="ge-btn" id="ge-hub-btn">🏠 EXIT TO HUB</button>
+            <button class="ge-btn" id="ge-pr-btn">🚀 SUBMIT SCORE ↗</button>
+            <button class="ge-btn sec" id="ge-hub-btn">🏠 EXIT TO HUB</button>
             <button class="ge-btn sec" id="ge-close-btn">✕ CLOSE</button>
           </div>
           <div class="ge-copied" id="ge-copied">✓ Copied to clipboard!</div>
-          <div class="ge-note" id="ge-pr-note">${owner ? '' : '⚠ PR button requires hosting on GitHub — URL not detected.'}</div>
+          <div class="ge-note" id="ge-pr-note">${owner ? '' : '⚠ Submission requires hosting on GitHub — URL not detected.'}</div>
         </div>
       </div>`;
 
     document.body.appendChild(bd);
 
-    // Helper: rebuild score row and PR link from current username input.
-    // Guards every DOM access: the modal may be dismissed while _buildPrUrl() is awaited.
+    // Helper: refresh submission link from current username input.
     async function _refresh() {
       const inputEl = document.getElementById('ge-uinput');
-      if (!inputEl) return; // modal was closed before this call completed
-      const raw = inputEl.value;
-      const u = _sanitizeUsername(raw);
-      // Sync the input to show sanitized value (e.g. stripped special chars)
-      if (u !== raw.replace(/^@/, '').trim()) {
-        inputEl.value = u;
-      }
+      if (!inputEl) return;
+      const u = _sanitizeUsername(inputEl.value);
+      inputEl.value = u;
       if (u) _storage.set('gg-github-username', u);
+
       const scoreEl = document.getElementById('ge-score-text');
       if (scoreEl) scoreEl.textContent = _buildScoreRow(u);
 
       const prBtn = document.getElementById('ge-pr-btn');
-      if (!prBtn) return; // modal was closed
-      prBtn.disabled = true;
-      prBtn.textContent = '⏳ Detecting branch…';
-      const url = await _buildPrUrl(u);
-      // Re-check after await — modal may have been closed while we waited
-      if (!prBtn.isConnected) return;
+      if (!prBtn) return;
+
+      const url = _buildPrUrl(u);
       if (url) {
-        prBtn.onclick = () => window.open(url, '_blank');
-        prBtn.style.opacity = '1';
+        prBtn.onclick = () => {
+          // 1. Open submission in new tab
+          window.open(url, '_blank');
+          // 2. Immediately close modal and go to hub
+          bd.remove();
+          document.removeEventListener('keydown', onKey);
+          window.location.href = 'index.html';
+        };
         prBtn.disabled = false;
-        prBtn.textContent = '🚀 OPEN PR ↗';
-      } else {
-        prBtn.style.opacity = '0.4';
-        prBtn.disabled = true;
-        prBtn.textContent = '🚀 OPEN PR ↗';
+        prBtn.style.opacity = '1';
       }
     }
 
