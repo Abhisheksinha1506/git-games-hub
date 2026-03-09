@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚰ Git Murder Mystery</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700&display=swap');
+  </style>
+  <style>
+    :root {
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Syne', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #060810;
+      --tbg: #0a0c14;
+      --cyan: #00d4ff;
+      --lime: #a8ff3e;
+      --coral: #ff4f6d;
+      --blue: #5bc8f5;
+      --purple: #b09af8;
+      --txt: #8899bb;
+      --tdim: #2a3050;
+      --brd: #151928;
+      --pbg: #0a0c14;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #040608 0%, #060810 60%, #040608 100%);
+      border-bottom: 1px solid #151928;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 212, 255, 0.03) 2px, rgba(0, 212, 255, 0.03) 4px);
+      pointer-events: none;
+    }
+
+    .h-t {
+      font-family: 'Syne', sans-serif;
+      font-size: 19px;
+      color: var(--cyan);
+      text-shadow: 0 0 28px rgba(0, 212, 255, .55);
+      letter-spacing: 3px;
+    }
+
+    .h-s {
+      font-family: 'Syne', sans-serif;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 11.5px;
+      margin-top: 2px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      border: 1px solid #151928;
+      padding: 3px 11px;
+      background: rgba(0, 212, 255, 0.1);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+    }
+
+    #hbadge {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      border: 1px solid #151928;
+      padding: 3px 11px;
+      background: rgba(0, 212, 255, 0.13);
+      flex-shrink: 0;
+      transition: all .4s;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 0 0 60%;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--brd);
+      background: var(--tbg);
+      position: relative;
+    }
+
+    .tw::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 21px, rgba(255, 255, 255, .011) 21px, rgba(255, 255, 255, .011) 22px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .tbar {
+      background: #0a0c14;
+      padding: 7px 14px;
+      border-bottom: 1px solid var(--brd);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+      z-index: 1;
+      position: relative;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    .tbar-t {
+      margin-left: 10px;
+      font-size: 10.5px;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 13px 15px;
+      font-size: 12.5px;
+      line-height: 1.65;
+      z-index: 1;
+      position: relative;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    #out::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+      border-radius: 3px;
+    }
+
+    .tin {
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-top: 1px solid var(--brd);
+      background: #060810;
+      flex-shrink: 0;
+      z-index: 1;
+      position: relative;
+    }
+
+    .prom {
+      color: var(--lime);
+      font-size: 12.5px;
+      margin-right: 7px;
+      white-space: nowrap;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      caret-color: var(--cyan);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--cyan);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--lime);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .lco {
+      color: var(--cyan);
+      font-weight: bold;
+    }
+
+    .la {
+      color: var(--blue);
+    }
+
+    .ld {
+      color: #ffffff;
+    }
+
+    .ladd {
+      color: var(--lime);
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .le {
+      color: var(--coral);
+    }
+
+    .lok {
+      color: var(--lime);
+      font-weight: bold;
+    }
+
+    .lt {
+      color: #34d399;
+    }
+
+    .lh {
+      color: #fb923c;
+    }
+
+    .lsep {
+      color: var(--brd);
+    }
+
+    .lblk {
+      display: block;
+      height: 5px;
+    }
+
+    .lwel {
+      color: var(--cyan);
+    }
+
+    .lhnt {
+      color: var(--purple);
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    .sp {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--pbg);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .tb {
+      flex: 1;
+      padding: 9px 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .5px;
+      color: #ffffff;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+      text-align: center;
+    }
+
+    .tb:hover {
+      color: var(--txt);
+    }
+
+    .tb.on {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
+    }
+
+    .tp {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: none;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .tp.on {
+      display: block;
+    }
+
+    .tp::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .tp::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .cft {
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      color: var(--cyan);
+      margin-bottom: 3px;
+    }
+
+    .cfs {
+      font-family: 'Syne', sans-serif;
+      font-style: italic;
+      color: #ffffff;
+      font-size: 12px;
+      padding-bottom: 11px;
+      margin-bottom: 11px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .cfsec {
+      margin-bottom: 13px;
+    }
+
+    .cfl {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .cfb {
+      font-family: 'Syne', sans-serif;
+      color: var(--txt);
+      font-size: 12.5px;
+      line-height: 1.85;
+    }
+
+    .cfc {
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid var(--brd);
+      padding: 6px 10px;
+      color: var(--cyan);
+      font-size: 10.5px;
+      margin-top: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      word-break: break-all;
+    }
+
+    .pi {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--brd);
+      align-items: flex-start;
+      opacity: .35;
+      transition: all .4s;
+    }
+
+    .pi.done {
+      opacity: 1;
+    }
+
+    .pc {
+      width: 17px;
+      height: 17px;
+      border: 1px solid var(--brd);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      margin-top: 1px;
+      transition: all .4s;
+    }
+
+    .pi.done .pc {
+      background: #174d27;
+      border-color: var(--lime);
+      color: var(--lime);
+    }
+
+    .pt {
+      font-size: 11.5px;
+      color: #ffffff;
+      transition: color .4s;
+    }
+
+    .pi.done .pt {
+      color: var(--txt);
+    }
+
+    .psub {
+      font-size: 11px;
+      color: var(--txt);
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    .hi {
+      margin-bottom: 9px;
+      border: 1px solid var(--brd);
+      overflow: hidden;
+    }
+
+    .hh {
+      padding: 8px 12px;
+      background: rgba(176, 154, 248, .04);
+      color: var(--purple);
+      font-size: 10px;
+      letter-spacing: .8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background .2s;
+    }
+
+    .hh:hover {
+      background: rgba(176, 154, 248, .08);
+    }
+
+    .hlk {
+      opacity: .3;
+      cursor: default;
+    }
+
+    .hlk:hover {
+      background: rgba(176, 154, 248, .04);
+    }
+
+    .hb {
+      padding: 10px 12px;
+      color: var(--txt);
+      font-size: 11.5px;
+      line-height: 1.7;
+      display: none;
+      background: rgba(0, 0, 0, .2);
+    }
+
+    .hb.open {
+      display: block;
+    }
+
+    .hcode {
+      background: rgba(0, 0, 0, .45);
+      border: 1px solid var(--brd);
+      padding: 5px 9px;
+      margin-top: 7px;
+      color: var(--cyan);
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+      word-break: break-all;
+    }
+
+    .ga {
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .gc {
+      color: #174d27;
+    }
+
+    .gca {
+      color: var(--cyan);
+    }
+
+    .gb2 {
+      color: #fb923c;
+    }
+
+    .gg {
+      color: #34d399;
+    }
+
+    .gd2 {
+      color: #ffffff;
+    }
+
+    #vic {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .9);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+    }
+
+    #vic.show {
+      display: flex;
+    }
+
+    .vt {
+      font-family: 'Syne', sans-serif;
+      font-size: 50px;
+      color: var(--cyan);
+      text-shadow: 0 0 60px rgba(0, 212, 255, .7);
+      animation: fu .6s ease-out;
+    }
+
+    .vn {
+      font-family: 'Syne', sans-serif;
+      font-style: italic;
+      font-size: 22px;
+      color: var(--txt);
+      animation: fu .6s .1s ease-out both;
+    }
+
+    .vs {
+      color: #ffffff;
+      font-size: 12px;
+      animation: fu .6s .2s ease-out both;
+    }
+
+    .vb {
+      margin-top: 14px;
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 8px 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      animation: fu .6s .3s ease-out both;
+      transition: background .2s;
+    }
+
+    .vb:hover {
+      background: rgba(0, 212, 255, 0.13);
+    }
+
+    @keyframes fu {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <div class="h-t">⚰ GIT MURDER MYSTERY</div>
+      <div class="h-s">A murder in Git Town — find the killer?</div>
+    </div>
+    <div class="hright" style="display: flex; align-items: center; gap: 12px; margin-left: auto; flex-shrink: 0;">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer"
+        style="font-size:12px;color:#a8ff3e;letter-spacing:2px;font-weight:bold;min-width:44px;font-family:JetBrains Mono,monospace;">00:00</span>
+    </div>
+    <div id="hbadge">● CASE OPEN</div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div><span class="tbar-t" id="tbar-t">gitstery — bash</span>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom" id="prom">~ $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder="type a git command…" maxlength="512" aria-label="Git Terminal Input"></div>
+    </div>
+    <div class="sp">
+      <div class="tabs">
+        <button class="tb on" id="tab-btn-case">📋 CASE</button>
+        <button class="tb" id="tab-btn-prog">✓ PROGRESS</button>
+        <button class="tb" id="tab-btn-hints">💡 HINTS</button>
+        <button class="tb" id="tab-btn-graph">🌿 GRAPH</button>
+      </div>
+      <div class="tp on" id="tab-case">
+        <div class="cft">The Harvey Street Homicide</div>
+        <div class="cfs">Git Town, July 1991 — A murder most cold</div>
+        <div class="cfsec">
+          <div class="cfl">The Brief</div>
+          <div class="cfb">Body at 14 Harvey Street, Sun Jul 21, 1991. Homicide investigation open.</div>
+        </div>
+        <div class="cfsec">
+          <div class="cfl">Your Lead</div>
+          <div class="cfb">Det. <strong style="color:var(--cyan)">Kyle Pumbinner</strong> filed report on <code
+              style="color:var(--lime)">gtpd-archive</code> branch — week after Jul 20, only one that week.</div>
+        </div>
+        <div class="cfsec">
+          <div class="cfl">Navigating Addresses</div>
+          <div class="cfb">Streets = <strong style="color:var(--lime)">git tags</strong>. House N = <strong
+              style="color:var(--cyan)">Nth ancestor</strong>:</div>
+          <div class="cfc">git show &lt;street-tag&gt;~N</div>
+        </div>
+        <div class="cfsec">
+          <div class="cfl">Verify Answer</div>
+          <div class="cfc">echo "Full Name" | git hash-object --stdin | grep -iq -f /dev/stdin &lt;(git show solution)
+            &amp;&amp; echo 'You found the murderer!' || echo 'No cigar...'</div>
+        </div>
+      </div>
+      <div class="tp" id="tab-prog">
+        <div id="plist"></div>
+        <div style="margin-top:14px;"> <button id="reset-btn"
+            style="background:transparent;border:1px solid #151928;color:#ffffff;padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;">↺
+            RESET</button></div>
+      </div>
+      <div class="tp" id="tab-hints">
+        <div style="color:#ffffff;font-size:11px;margin-bottom:12px;line-height:1.6;">Hints unlock via <span
+            style="color:var(--purple)">hint</span> or clicks.</div>
+        <div id="hlist"></div>
+      </div>
+      <div class="tp" id="tab-graph">
+        <div class="ga" id="garea"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Victory overlay: answer injected at solve time only, never pre-rendered -->
+  <div id="vic">
+    <div class="vt">CASE CLOSED</div>
+    <div class="vn" id="vname"></div>
+    <div class="vs">Unravelled the Homicide. Justice in Git Town.</div>
+    <button class="vb" id="vic-close">CLOSE</button>
+    <button class="vb" id="vic-hub" style="margin-left:10px;">← HUB</button>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'murder';
+
+    // Answer split to avoid literal appearing in one searchable string in source
+    const _A = ['Bruno', 'Proizzan'].join(' ');
+    const STORY = { motive: 'financial dispute (unpaid debt ~\xA3400)', witnesses: 'Ira Grazzitch, Sterling Brammer' };
+
+    const GTPD = [
+      { h: 'a3f7c21', f: 'a3f7c2156e8b934d2f1a7c8e9d034f562b1a8c9d', msg: 'GTPD Report #5102 - Vandalism on Glendale', au: 'Dana Mills', dt: 'Sat Aug 3 09:15:00 1991' },
+      { h: '9e2b814', f: '9e2b8144f7c2e5a8b1d6f3c9e2a7b4d8f1c5e9a3', msg: 'GTPD Report #5099 - Noise complaint at Moor End', au: 'Sam Reed', dt: 'Thu Aug 1 14:22:00 1991' },
+      { h: '7d4a159', f: '7d4a159f3b2c8e5a1d7f4b9c2e6a3d8f5b1c7e2a', msg: 'GTPD Report #4821 - Homicide at Harvey Street', au: 'Kyle Pumbinner', dt: 'Mon Jul 22 08:45:00 1991' },
+      { h: '2c8f036', f: '2c8f036a1b4e7d9f3c8a2e5b7d1f4a9c6e3b8d5f', msg: 'GTPD Report #4819 - Theft at Wilson Gardens', au: 'Kyle Pumbinner', dt: 'Sat Jul 19 16:30:00 1991' },
+      { h: 'b5e9a73', f: 'b5e9a739d2c6f4a1b8e5c3f7d9a2b6e4c1f7d3a8', msg: 'GTPD Report #4801 - Disturbance at Bowler Street', au: 'Kyle Pumbinner', dt: 'Sun Jul 14 20:10:00 1991' },
+      { h: 'f1c3d82', f: 'f1c3d827e5a9b4c2f8d1e6a3b7c4f9d2e5a8b1c6', msg: 'GTPD Report #4788 - Missing person, Valentia Road', au: 'Sam Reed', dt: 'Wed Jul 10 11:05:00 1991' },
+      { h: 'e7a4f91', f: 'e7a4f916d3c8b2e5a1f9d4c7b3e6a2f8d5c9b1e4', msg: 'GTPD Report #4772 - Vandalism at Holmefield Ave', au: 'Dana Mills', dt: 'Mon Jul 8 09:55:00 1991' },
+      { h: 'c2b8d34', f: 'c2b8d341a9e5f7c3b6d2a8f1e4c9b5d7a3f2e8c1', msg: 'GTPD Report #4750 - Trespassing at Corbet Close', au: 'Kyle Pumbinner', dt: 'Thu Jul 4 15:20:00 1991' },
+    ];
+
+    // Key narrative content — built from GTPD data for single source of truth
+    const RPT4821 = `commit ${GTPD[2].f}\nAuthor: Kyle Pumbinner <k.pumbinner@gtpd.gov>\nDate:   Mon Jul 22 08:45:00 1991\n\n    ${GTPD[2].msg}\n\ndiff --git a/reports/4821.txt b/reports/4821.txt\nnew file mode 100644\n+++ b/reports/4821.txt\n@@ -0,0 +1,19 @@\n+GIT TOWN POLICE DEPARTMENT\n+CRIME SCENE REPORT #4821\n+========================\n+Date: Monday, July 22, 1991\n+Reporting Officer: Det. Kyle Pumbinner\n+Classification: Homicide (Open)\n+\n+LOCATION: 14 Harvey Street, Git Town\n+VICTIM: [Redacted — pending next-of-kin notification]\n+\n+INCIDENT:\n+Victim found deceased at approx. 23:00 Sunday July 21st.\n+Neighbour reported a heated argument earlier that evening\n+at around 22:30. Signs of a struggle inside the property.\n+\n+WITNESS: Ira Grazzitch (resident, Larch Walk) was present\n+in the immediate area and claims to have seen a suspicious\n+individual leaving the premises. Interview pending.`;
+
+    const LARCH41 = `commit 4f2a9c1b7e3d5a8c2f6b9d1e4a7c3f8b5e2d9a6c\nAuthor: Git Town Registry <registry@gittown.local>\nDate:   Sat Jan 1 00:00:00 1988\n\n    Resident record: Larch Walk #41\n\n+Name: Ira Grazzitch\n+Address: 41 Larch Walk, Git Town\n+\n+Statement (Jul 22, 1991):\n+"I was walking past Harvey Street at around 11pm Sunday.\n+ I saw a man leave number 14 in quite a hurry — he seemed\n+ nervous. I know him from the Glendale community garden.\n+ Seen him there many times. Distinctive. Always wears a flat cap."`;
+
+    const GLENDALE38 = `commit 8b3d2e7a5c1f9d4b6e2a8c3f7d1b5e9a2c6f4d8b\nAuthor: Git Town Registry <registry@gittown.local>\nDate:   Sat Jan 1 00:00:00 1988\n\n    Resident record: Glendale #38\n\n+Name: Sterling Brammer\n+Address: 38 Glendale, Git Town\n+\n+Statement (Jul 23, 1991):\n+"I know exactly who Ira is describing — the man with\n+ the flat cap from the community garden. That would be\n+ Bruno Proizzan. Lives over on Badgers Dene, Number 36.\n+ I saw him heading toward Harvey Street around 10:30pm.\n+ He looked agitated."`;
+
+    const BADGERS36 = `commit c91e5f3d2a7b4e8c1f6d9a3b7e2c5f8d1a4b7e3c\nAuthor: Git Town Registry <registry@gittown.local>\nDate:   Sat Jan 1 00:00:00 1988\n\n    Resident record: Badgers Dene #36\n\n+Name: Bruno Proizzan\n+Address: 36 Badgers Dene, Git Town\n+\n+Notes (Jul 24, 1991 — Det. Pumbinner):\n+Primary suspect. Two independent witnesses place him at or\n+near Harvey Street at the time of the murder. Motive: a\n+financial dispute with the victim (unpaid debt, approx \xA3400).\n+No alibi provided for 22:00\u201323:30 on July 21st.\n+Arrest warrant being prepared.`;
+
+    const TAGS = ['badgers-dene', 'balcombe-close', 'beaconside', 'bowler-street', 'cliff-place', 'corbet-close', 'down-close', 'glan-road', 'glendale', 'harvey-street', 'holmefield-avenue', 'larch-walk', 'moor-end', 'sunningdale-drive', 'tamworth-drive', 'valentia-road', 'ventnor-terrace', 'wellswood-gardens', 'wilson-gardens', 'wantage-close'];
+
+    const PSTEPS = [
+      { lbl: 'Cloned the repository', sub: 'git clone …/gitstery.git' },
+      { lbl: 'Found crime scene report (#4821)', sub: 'Explored the gtpd-archive branch' },
+      { lbl: 'Identified witness: Ira Grazzitch', sub: 'Read report #4821' },
+      { lbl: 'Visited 41 Larch Walk', sub: 'git show larch-walk~41' },
+      { lbl: 'Identified witness: Sterling Brammer', sub: "Ira's statement led to Glendale" },
+      { lbl: 'Visited 38 Glendale', sub: 'git show glendale~38' },
+      { lbl: 'Identified suspect', sub: "Sterling's statement named him" },
+      { lbl: 'Verified the answer — case closed 🎉', sub: 'echo "…name…" | …' },
+    ];
+
+    const HINTS = [
+      { t: 'HINT 1 — Finding the report', b: "The crime scene report is on the <strong>gtpd-archive</strong> branch. Det. Pumbinner filed it the week after Sat Jul 20 — that's Jul 21–27, 1991.", c: 'git log gtpd-archive --oneline --author="Kyle Pumbinner" --after="1991-07-20" --before="1991-07-28"' },
+      { t: 'HINT 2 — Reading the report', b: 'Once you have the commit hash, view the full report.', c: 'git show 7d4a159' },
+      { t: 'HINT 3 — Finding the street tag', b: 'A witness lives on Larch Walk. Streets are git tags.', c: 'git tag | grep larch' },
+      { t: 'HINT 4 — Navigating to the house', b: 'The tag points to house #1 (tip). Use tilde to go back N commits.', c: 'git show larch-walk~41' },
+      { t: 'HINT 5 — Following the chain', b: 'The first witness names another. Find their street tag and house number.', c: 'git show glendale~38' },
+      { t: 'HINT 6 — Confirming the suspect', b: 'The second witness names the murderer and their address.', c: 'git show badgers-dene~36' },
+      { t: 'HINT 7 — Checking your answer', b: 'Use the verification command with your suspect\'s full name.', c: 'echo "…their full name…" | git hash-object --stdin | grep -iq -f /dev/stdin &lt;(git show solution) &amp;&amp; echo \'You found the murderer!\' || echo \'No cigar...\'' },
+    ];
+
+    // Stable localStorage key (no year suffix)
+    const LS_KEY = 'gmm-murder-v1';
+    const S = { cloned: false, prog: PSTEPS.map(() => false), hintsShown: 0, hist: [], hidx: -1 };
+
+    function loadS() { try { const d = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); if (Array.isArray(d.prog) && d.prog.length === PSTEPS.length) S.prog = d.prog; if (typeof d.hintsShown === 'number') S.hintsShown = d.hintsShown; if (typeof d.cloned === 'boolean') S.cloned = d.cloned; } catch (e) { } }
+    function saveS() { try { localStorage.setItem(LS_KEY, JSON.stringify({ prog: S.prog, hintsShown: S.hintsShown, cloned: S.cloned })); } catch (e) { } }
+    function setP(i) { S.prog[i] = true; renderProg(); }
+    function resetProg() { if (confirm('Reset all progress?')) { S.prog = PSTEPS.map(() => false); S.hintsShown = 0; S.cloned = false; saveS(); renderProg(); renderHints(); } }
+
+    function renderProg() {
+      document.getElementById('plist').innerHTML = PSTEPS.map((p, i) =>
+        `<div class="pi${S.prog[i] ? ' done' : ''}"><div class="pc">${S.prog[i] ? '✓' : ''}</div><div><div class="pt">${p.lbl}</div><div class="psub">${p.sub}</div></div></div>`
+      ).join('');
+    }
+
+    function renderHints() {
+      document.getElementById('hlist').innerHTML = HINTS.map((h, i) => {
+        const unlocked = i < S.hintsShown;
+        return `<div class="hi"><div class="hh${unlocked ? '' : ' hlk'}" data-hi="${i}"><span>${h.t}</span><span>${unlocked ? '▾' : '🔒'}</span></div><div class="hb" id="hb${i}">${h.b}<div class="hcode">${h.c}</div></div></div>`;
+      }).join('');
+      document.querySelectorAll('.hh').forEach(el => {
+        el.addEventListener('click', () => {
+          const i = parseInt(el.dataset.hi);
+          if (i < S.hintsShown) { const hb = document.getElementById('hb' + i); if (hb) hb.classList.toggle('open'); }
+          else { unlockHint(i); }
+        });
+      });
+    }
+
+    function unlockHint(i) { if (i <= S.hintsShown) { S.hintsShown = i + 1; saveS(); renderHints(); const hb = document.getElementById('hb' + i); if (hb) hb.classList.add('open'); } }
+
+    function stab(name) {
+      document.querySelectorAll('.tp').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+      document.getElementById('tab-' + name).classList.add('on');
+      document.getElementById('tab-btn-' + name).classList.add('on');
+    }
+    ['case', 'prog', 'hints', 'graph'].forEach(name => {
+      document.getElementById('tab-btn-' + name).addEventListener('click', () => stab(name));
+    });
+    document.getElementById('reset-btn').addEventListener('click', resetProg);
+    document.getElementById('vic-close').addEventListener('click', () => document.getElementById('vic').classList.remove('show'));
+    document.getElementById('vic-hub').addEventListener('click', () => window.location.href = 'index.html');
+
+    function renderGraph() {
+      // Dynamic — built from GTPD array (single source of truth)
+      // The key commit is the homicide report — derived from GTPD data
+      const keyCommit = GTPD.find(c => c.msg.toLowerCase().includes('homicide'));
+      const keyHash = keyCommit ? keyCommit.h : '';
+      document.getElementById('garea').innerHTML = GTPD.map(c => {
+        const isKey = c.h === keyHash;
+        return `<div class="${isKey ? 'gca' : 'gc'}">* ${c.h} ${c.msg}${isKey ? ' ◄ FIND THIS' : ''}</div>`;
+      }).join('') + `<div class="gd2">...</div><div class="gd2">Tags: larch-walk, glendale, badgers-dene, harvey-street, ...</div>`;
+    }
+
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+    function ln(t, tx) { const s = document.createElement('span'); s.className = 'ln l' + t; s.textContent = tx; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln lblk'; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    function renderDiff(raw) { for (const l of raw.split('\n')) { let t = 'o'; if (l.startsWith('commit ')) t = 'co'; else if (l.startsWith('Author:')) t = 'a'; else if (l.startsWith('Date:')) t = 'd'; else if (l.startsWith('+') || l.startsWith('diff ') || l.startsWith('new file') || l.startsWith('@')) t = 'add'; else if (l.startsWith('-')) t = 'e'; ln(t, l); } }
+    function notCloned() { ln('e', 'fatal: not a git repository (run: git clone gitstery.git)'); }
+    function extractArg(cmd, flag) { const r = [new RegExp(`${flag}=[\"']?([^\"'\\s]+)[\"']?`), new RegExp(`${flag}\\s+[\"']?([^\"'\\s]+)[\"']?`)]; for (const p of r) { const m = cmd.match(p); if (m) return m[1]; } return null; }
+    function parseDateArg(s) { if (!s) return null; const p = s.split('-').map(Number); return p[0] * 10000 + p[1] * 100 + p[2]; }
+    function dateNum(dt) { const p = dt.trim().split(/\s+/); const mo = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 }; return parseInt(p[4]) * 10000 + mo[p[1]] * 100 + parseInt(p[2]); }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      S.hist.unshift(cmd); if (S.hist.length > 80) S.hist.pop(); S.hidx = -1;
+      ln('c', cmd); blk();
+      const lc = cmd.toLowerCase();
+      if (lc === 'clear') { out.innerHTML = ''; return; }
+      if (lc === 'help' || lc === 'git help') { doHelp(); scrl(); return; }
+      if (lc === 'hint') { doHint(); scrl(); return; }
+      if (lc === 'ls') { ln('o', 'reports/  residents/  solution  instructions.txt'); scrl(); return; }
+      if (cmd.includes('git hash-object') && cmd.includes('git show solution')) { doSolve(cmd); scrl(); return; }
+      if (!cmd.startsWith('git') && !cmd.startsWith('echo')) { ln('e', `bash: ${cmd.split(' ')[0]}: command not found`); ln('lm', "Type 'help' for a list of commands."); scrl(); return; }
+      const parts = cmd.split(/\s+/), sub = parts[1];
+      switch (sub) {
+        case 'clone': doClone(cmd); break;
+        case 'log': doLog(cmd); break;
+        case 'show': doShow(cmd); break;
+        case 'tag': doTag(cmd); break;
+        case 'branch': doBranch(cmd); break;
+        case 'status': doStatus(); break;
+        case 'diff': ln('o', '(nothing to diff — working tree clean)'); break;
+        default: ln('e', `git: '${sub || ''}' is not a git command. Try 'help'.`);
+      }
+      scrl();
+    }
+
+    function doHelp() { ln('o', 'Available commands:'); ln('o', '  git clone <url>         — clone the repository'); ln('o', '  git log [branch] [opts] — show commit history'); ln('o', '  git show <hash/tag~N>   — inspect a commit or object'); ln('o', '  git tag                 — list all street tags'); ln('o', '  git branch              — list branches'); ln('o', '  git status              — show working tree status'); ln('o', '  hint                    — unlock next hint'); ln('o', '  clear                   — clear terminal'); blk(); ln('hnt', 'Tip: git log gtpd-archive --oneline --author="Kyle Pumbinner" --after="1991-07-20"'); }
+    function doHint() { S.hintsShown = Math.min(S.hintsShown + 1, HINTS.length); saveS(); const h = HINTS[S.hintsShown - 1]; ln('hnt', `[HINT ${S.hintsShown}] ${h.t}`); ln('hnt', h.b.replace(/<[^>]+>/g, '')); ln('hnt', `Example: ${h.c.replace(/<[^>]+>/g, '')}`); renderHints(); }
+
+    function doSolve(cmd) {
+      const m = cmd.match(/echo\s+["']([^"']+)['"]/);
+      if (!m) { ln('e', 'Could not parse name from echo command.'); return; }
+      const name = m[1].trim();
+      if (name.toLowerCase() === _A.toLowerCase()) {
+        blk(); ln('lok', 'You found the murderer!'); blk();
+        ln('lok', ` ▸ CASE CLOSED: The Harvey Street Homicide`);
+        ln('lok', ` ▸ Murderer: ${_A}`);
+        ln('lok', ` ▸ Motive: ${STORY.motive}`);
+        ln('lok', ` ▸ Witnesses: ${STORY.witnesses}`); blk();
+        setP(7); saveS();
+        const secs = GitEngine.stopTimer();
+        document.getElementById('hbadge').textContent = '● CASE CLOSED';
+        document.getElementById('hbadge').style.color = 'var(--green)';
+        // Inject answer into overlay at solve time only (never pre-rendered)
+        document.getElementById('vname').textContent = _A;
+        document.getElementById('vic').classList.add('show');
+        setTimeout(() => GitEngine.showCompletionModal('murder', secs), 900);
+      } else { blk(); ln('e', 'No cigar, chief... Try again.'); ln('lm', `("${name}" doesn't match our records.)`); }
+    }
+
+    function doClone(cmd) { ln('o', "Cloning into 'gitstery'..."); ln('o', 'remote: Enumerating objects: 3241, done.'); ln('o', 'remote: Compressing objects: 100% (1407/1407), done.'); ln('o', 'Receiving objects: 100% (3241/3241), 418.7 KiB | 2.3 MiB/s, done.'); blk(); ln('lok', '✓ Repository cloned. Type your first command to begin.'); S.cloned = true; document.getElementById('prom').textContent = '~/gitstery $'; setP(0); saveS(); }
+
+    function doLog(cmd) {
+      if (!S.cloned) { notCloned(); return; }
+      const hasBranch = cmd.includes('gtpd-archive');
+      const hasTag = TAGS.find(t => cmd.includes(t));
+      const authorF = extractArg(cmd, '--author');
+      const afterF = parseDateArg(extractArg(cmd, '--after'));
+      const beforeF = parseDateArg(extractArg(cmd, '--before'));
+      const oneline = cmd.includes('--oneline');
+      if (!hasBranch && !hasTag) { ln('o', 'fatal: your current branch has no commits yet.'); ln('lm', '(Try: git log gtpd-archive --oneline)'); return; }
+      let commits = [...GTPD];
+      if (authorF) commits = commits.filter(c => c.au.toLowerCase().includes(authorF.toLowerCase().replace(/['"]/g, '')));
+      if (afterF) commits = commits.filter(c => dateNum(c.dt) > afterF);
+      if (beforeF) commits = commits.filter(c => dateNum(c.dt) < beforeF);
+      if (commits.length === 0) { ln('lm', '(no commits match the given filters)'); return; }
+      for (const c of commits) {
+        if (oneline) { ln('h', `${c.h} ${c.msg}`); }
+        else { ln('co', `commit ${c.f || c.h}`); ln('a', `Author: ${c.au} <${c.au.toLowerCase().replace(' ', '.')}@gtpd.gov>`); ln('d', `Date:   ${c.dt}`); blk(); ln('o', `    ${c.msg}`); blk(); }
+      }
+      setP(1); saveS();
+    }
+
+    function doShow(cmd) {
+      if (!S.cloned) { notCloned(); return; }
+      const arg = (cmd.split(/\s+/).slice(2).join(' ') || '').trim().replace(/^['"]|['"]$/g, '');
+      if (!arg) { ln('e', 'Usage: git show <hash or tag~N>'); return; }
+      if (arg === '7d4a159' || arg.startsWith('7d4a159')) { renderDiff(RPT4821); setP(1); setP(2); saveS(); return; }
+      const tildeMatch = arg.match(/^([\w-]+)~(\d+)$/);
+      if (tildeMatch) {
+        const [, tag, nStr] = tildeMatch, n = parseInt(nStr);
+        if (tag === 'larch-walk' && n === 41) { renderDiff(LARCH41); setP(3); setP(4); saveS(); return; }
+        if (tag === 'glendale' && n === 38) { renderDiff(GLENDALE38); setP(4); setP(5); setP(6); saveS(); return; }
+        if (tag === 'badgers-dene' && n === 36) { renderDiff(BADGERS36); setP(6); saveS(); return; }
+        if (TAGS.includes(tag)) {
+          ln('o', `commit ${('a' + tag + n).padEnd(40, '0').slice(0, 40)}`);
+          ln('o', `Author: Git Town Registry <registry@gittown.local>`);
+          ln('o', `Date:   Sat Jan 1 00:00:00 1988`); blk();
+          ln('o', `    Resident record: ${tag.replace(/-/g, ' ')} #${String(n).padStart(2, '0')}`); blk();
+          ln('add', `+Name: [Record sealed]`);
+          ln('add', `+Address: ${n} ${tag.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}, Git Town`);
+          return;
+        }
+      }
+      if (arg === 'solution') { ln('lm', '[solution hash — compare with your answer]'); return; }
+      if (arg.match(/^[0-9a-f]{7,40}$/)) { ln('e', `fatal: bad object ${arg}`); return; }
+      ln('e', `fatal: Not a valid object name: '${arg}'`);
+    }
+    function doTag(cmd) { if (!S.cloned) { notCloned(); return; } TAGS.forEach(t => ln('o', t)); }
+    function doBranch(cmd) { if (!S.cloned) { notCloned(); return; } ln('o', '* main'); ln('o', '  gtpd-archive'); ln('o', '  residents-registry'); }
+    function doStatus() { if (!S.cloned) { notCloned(); return; } ln('o', 'On branch main'); ln('o', 'nothing to commit, working tree clean'); }
+
+    loadS(); renderProg(); renderHints(); renderGraph();
+    ln('o', '╔══════════════════════════════════════════╗');
+    ln('o', '║     GIT MURDER MYSTERY — CASE #4821      ║');
+    ln('o', '╚══════════════════════════════════════════╝');
+    blk();
+    ln('o', 'A body has been found at 14 Harvey Street.');
+    ln('o', 'You are the detective. Use git to find the killer.');
+    blk();
+    ln('hnt', 'Start: git clone gitstery.git');
+    ln('hnt', 'Then:  git log gtpd-archive --author="Kyle Pumbinner" --after="1991-07-20"');
+    blk();
+    ln('lm', 'Type  help  for all commands.  hint  for nudges.');
+    blk();
+    GitEngine.startTimer(document.getElementById('timer'));
+    GitOverlay.init({
+      gameId: 'murder', title: '⚰️ Git Murder Mystery', tagline: 'A 1991 homicide in Git Town — find the killer',
+      objective: 'A man was murdered on Harvey Street. Clone the GTPD archive, navigate witness testimonies hidden across branches and tags, and identify the killer.',
+      howToPlay: ['Clone the evidence repository: <code>git clone gitstery.git</code>.', 'Browse police reports: <code>git log gtpd-archive --author="Kyle Pumbinner" --after="1991-07-20"</code>.', 'Use <code>git show &lt;hash&gt;</code> to read specific incident reports.', 'Follow the witness trail: each tag (~41, ~38, ~36) holds a testimony.', 'Submit your answer using the echo verification command.'],
+      commands: [{ cmd: 'git clone gitstery.git', desc: 'Clone the police archive repository' }, { cmd: 'git log &lt;branch&gt; --author="Name" --after="date"', desc: 'Filter commit history by author and date' }, { cmd: 'git show &lt;hash&gt;', desc: 'Read a specific commit (incident report)' }, { cmd: 'git show &lt;tag&gt;~N', desc: 'Read a commit N steps before a named tag' }, { cmd: 'git tag', desc: 'List all named street tags (locations)' }, { cmd: 'hint', desc: 'Unlock the next investigation hint' }],
+      tips: ['The murder occurred on <strong>July 22, 1991</strong> — use --after="1991-07-20" to filter.', 'Witness testimonies are at: larch-walk~41, glendale~38, and badgers-dene~36.', 'Use <code>git tag</code> to see all location tags in the archive.', 'There are 7 hints available — use them freely, they don\'t affect your time.'],
+      scoring: 'Timer starts on page load and stops when you submit the correct murderer\'s name. Fastest correct solution wins.',
+    });
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (S.hidx < S.hist.length - 1) { S.hidx++; ci.value = S.hist[S.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (S.hidx > 0) { S.hidx--; ci.value = S.hist[S.hidx] || ''; } else { S.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>

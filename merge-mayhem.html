@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚔️ Merge Conflict Mayhem</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Playfair+Display:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'Share Tech Mono', 'Fira Mono', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --amber: #e8a23a;
+      --green: #3dba5e;
+      --red: #e05555;
+      --blue: #5bc8f5;
+      --txt: #b8a898;
+      --brd: #1c1e26;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #1a1f2a;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .h-t {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--amber);
+      letter-spacing: 2px;
+    }
+
+    .hright {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timer {
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 2px;
+      font-weight: bold;
+      min-width: 48px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--amber);
+      border: 1px solid #3a2a10;
+      padding: 4px 10px;
+      background: rgba(232, 162, 58, .1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 0 0 44%;
+      border-right: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tbar {
+      background: #2a2f3a;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .tin {
+      display: flex;
+      padding: 7px 12px;
+      background: #0e1015;
+      border-top: 1px solid var(--brd);
+      align-items: center;
+    }
+
+    .prom {
+      color: var(--green);
+      margin-right: 6px;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--amber);
+      font-family: inherit;
+      font-size: 12px;
+      caret-color: var(--amber);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--amber);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--green);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .le {
+      color: var(--red);
+    }
+
+    .lok {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .lstep {
+      color: var(--cyan);
+    }
+
+    .game-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0d0f14;
+      overflow: hidden;
+    }
+
+    .gp-top {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--brd);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .gp-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .gp-val {
+      font-size: 18px;
+      color: var(--amber);
+      font-weight: bold;
+    }
+
+    .conflict-zone {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .conflict-block {
+      border: 1px solid var(--brd);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: all .3s;
+      animation: cslide .25s ease;
+    }
+
+    @keyframes cslide {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .conflict-block.resolved {
+      opacity: .4;
+      border-color: var(--green);
+    }
+
+    .cb-head {
+      background: #1a1f2a;
+      padding: 6px 10px;
+      font-size: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cb-head .fname {
+      color: var(--amber);
+    }
+
+    .cb-head .status {
+      color: var(--red);
+    }
+
+    .cb-head .status.done {
+      color: var(--green);
+    }
+
+    .cb-body {
+      padding: 8px 10px;
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .cb-ours {
+      color: var(--green);
+    }
+
+    .cb-sep {
+      color: #ffffff;
+    }
+
+    .cb-theirs {
+      color: var(--blue);
+    }
+
+    .cb-choose {
+      display: flex;
+      gap: 6px;
+      padding: 8px 10px;
+      border-top: 1px solid var(--brd);
+    }
+
+    .choice-btn {
+      flex: 1;
+      padding: 5px;
+      border: 1px solid var(--brd);
+      background: transparent;
+      color: var(--txt);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+    }
+
+    .choice-btn:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .choice-btn.theirs:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .step-panel {
+      padding: 12px 16px;
+      border-top: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .sp-head {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 class="h-t">⚔️ Merge Mayhem</h1>
+    <div class="hright">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer">00:00</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom">~/repo $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder="git merge &lt;branch&gt; to start…" maxlength="512"></div>
+    </div>
+    <div class="game-panel">
+      <div class="gp-top">
+        <div>
+          <div class="gp-label">Wave</div>
+          <div class="gp-val" id="wave-num">—</div>
+        </div>
+        <div style="text-align:center">
+          <div class="gp-label">Score</div>
+          <div class="gp-val" id="score-num">0</div>
+        </div>
+        <div style="text-align:right">
+          <div class="gp-label">Left</div>
+          <div class="gp-val" id="left-num">—</div>
+        </div>
+      </div>
+      <div class="conflict-zone" id="conflict-zone">
+        <div style="margin:auto;text-align:center;color:#ffffff;font-size:11px;line-height:2.2;">
+          No active conflicts.<br>
+          <span style="color:var(--amber);">git merge feature-branch</span><br>to start Wave 1.
+        </div>
+      </div>
+      <div class="step-panel">
+        <div class="sp-head">📋 Waves</div>
+        <div id="step-list"></div>
+      </div>
+    </div>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'merge-mayhem';
+    const POINTS_PER_CONFLICT = 10; // named constant — not magic number
+
+    const WAVES = [
+      {
+        branch: 'feature-branch', conflicts: [
+          { id: 0, file: 'app.js', ours: 'console.log("v1.0")', theirs: 'console.log("v2.0")' },
+          { id: 1, file: 'styles.css', ours: 'color: red;', theirs: 'color: blue;' },
+          { id: 2, file: 'README.md', ours: '# Old Title', theirs: '# New Title' },
+        ]
+      },
+      {
+        branch: 'hotfix', conflicts: [
+          { id: 0, file: 'config.py', ours: 'DEBUG = True', theirs: 'DEBUG = False' },
+          { id: 1, file: 'server.js', ours: 'port = 3000', theirs: 'port = 8080' },
+          { id: 2, file: 'index.html', ours: '<h1>Dev</h1>', theirs: '<h1>Prod</h1>' },
+          { id: 3, file: 'auth.py', ours: 'TIMEOUT = 60', theirs: 'TIMEOUT = 300' },
+        ]
+      },
+      {
+        branch: 'release-v2', conflicts: [
+          { id: 0, file: 'main.go', ours: 'version = "1.9"', theirs: 'version = "2.0"' },
+          { id: 1, file: 'Makefile', ours: 'BUILD=debug', theirs: 'BUILD=release' },
+          { id: 2, file: 'deploy.sh', ours: 'ENV=staging', theirs: 'ENV=production' },
+          { id: 3, file: 'CHANGELOG', ours: '## v1.9', theirs: '## v2.0' },
+          { id: 4, file: 'package.json', ours: '"version":"1.9.0"', theirs: '"version":"2.0.0"' },
+        ]
+      },
+    ];
+
+    // Steps: one per wave — generated from WAVES (no hardcoded branch names)
+    const STEPS = WAVES.map((w, i) => ({
+      label: 'Wave ' + (i + 1) + ': git merge ' + w.branch,
+      prompt: 'Merge the branch: git merge ' + w.branch,
+      hint: 'Type: git merge ' + w.branch,
+      cmd_example: 'git merge ' + w.branch,
+      success_msg: 'Merge started! Resolve the ' + w.conflicts.length + ' conflicts in the panel.',
+      wrong_msg: 'Wrong branch name. You need: git merge ' + w.branch,
+      check: cmd => cmd.trim() === 'git merge ' + w.branch,
+    }));
+
+    const GS = { wave: 0, score: 0, resolved: 0, total: 0, active: false, hist: [], hidx: -1 };
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+
+    function ln(cls, txt) { const s = document.createElement('span'); s.className = 'ln l' + cls; s.textContent = txt; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln'; s.textContent = ''; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    // StepRunner is used correctly: wave merge command → advance, then conflicts resolved → next wave
+    // onComplete fires when all STEPS are done (after the LAST wave's merge command is accepted)
+    const runner = new GitEngine.StepRunner(STEPS, {
+      onComplete: () => {
+        // All wave-start commands accepted. Completion modal fires after all conflicts resolved (see resolve()).
+        // This fires only if user somehow completes step gating without going through conflict resolution.
+        // The primary completion path is in resolve() after GS.wave >= WAVES.length.
+      }
+    });
+    function renderSteps() { GitEngine.renderStepProgress(document.getElementById('step-list'), STEPS, runner.current); }
+
+    function startWave(waveIdx) {
+      const w = WAVES[waveIdx];
+      GS.resolved = 0; GS.total = w.conflicts.length; GS.active = true;
+      document.getElementById('wave-num').textContent = waveIdx + 1;
+      document.getElementById('left-num').textContent = GS.total;
+      const zone = document.getElementById('conflict-zone'); zone.innerHTML = '';
+      w.conflicts.forEach(c => {
+        const div = document.createElement('div'); div.className = 'conflict-block'; div.id = 'cb-' + c.id;
+        div.innerHTML =
+          '<div class="cb-head"><span class="fname">⚠ ' + c.file + '</span><span class="status" id="cs-' + c.id + '">UNRESOLVED</span></div>' +
+          '<div class="cb-body"><div class="cb-ours">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</div>' +
+          '<div class="cb-ours" style="padding-left:10px;">' + escHtml(c.ours) + '</div>' +
+          '<div class="cb-sep">=======</div>' +
+          '<div class="cb-theirs" style="padding-left:10px;">' + escHtml(c.theirs) + '</div>' +
+          '<div class="cb-theirs">&gt;&gt;&gt;&gt;&gt;&gt;&gt; ' + w.branch + '</div></div>' +
+          '<div class="cb-choose">' +
+          '<button class="choice-btn" data-id="' + c.id + '" data-choice="ours" data-val="' + escAttr(c.ours) + '">Keep Ours (HEAD)</button>' +
+          '<button class="choice-btn theirs" data-id="' + c.id + '" data-choice="theirs" data-val="' + escAttr(c.theirs) + '">Keep Theirs</button>' +
+          '</div>';
+        zone.appendChild(div);
+        // Wire resolve buttons via addEventListener (no inline onclick — CSP safe)
+        div.querySelectorAll('.choice-btn').forEach(btn => {
+          btn.addEventListener('click', () => resolve(parseInt(btn.dataset.id), btn.dataset.choice, btn.dataset.val));
+        });
+      });
+    }
+
+    function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function escAttr(s) { return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+
+    function resolve(id, choice, val) {
+      const block = document.getElementById('cb-' + id);
+      if (!block || block.classList.contains('resolved')) return;
+      block.classList.add('resolved');
+      const st = document.getElementById('cs-' + id);
+      if (st) { st.textContent = '✓ RESOLVED'; st.className = 'status done'; }
+      block.querySelector('.cb-choose').innerHTML = '<div style="color:var(--green);font-size:10px;padding:4px 0;">✓ Kept: ' + escHtml(val) + '</div>';
+      GS.resolved++;
+      GS.score += POINTS_PER_CONFLICT;
+      document.getElementById('score-num').textContent = GS.score;
+      document.getElementById('left-num').textContent = GS.total - GS.resolved;
+      ln('lok', '✓ Conflict resolved — kept ' + choice + ' version'); blk(); scrl();
+
+      if (GS.resolved === GS.total) {
+        GS.active = false;
+        ln('lok', 'Wave ' + (GS.wave + 1) + ' cleared! Score: ' + GS.score); blk(); scrl();
+        GS.wave++;
+
+        if (GS.wave >= WAVES.length) {
+          // All waves done — fire completion modal directly
+          // (StepRunner is already at 'complete' from the final wave's merge command)
+          const secs = GitEngine.stopTimer();
+          ln('lok', '🎉 ALL WAVES CLEARED! Final score: ' + GS.score); blk(); scrl();
+          setTimeout(() => GitEngine.showCompletionModal(GAME_ID, secs), 700);
+        } else {
+          renderSteps();
+          blk();
+          ln('lstep', '▶ NEXT WAVE: git merge ' + WAVES[GS.wave].branch); blk(); scrl();
+        }
+      }
+    }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      GS.hist.unshift(cmd); if (GS.hist.length > 60) GS.hist.pop(); GS.hidx = -1;
+      ln('c', cmd); blk();
+      if (cmd === 'clear') { out.innerHTML = ''; return; }
+      if (GS.active) { ln('le', 'Finish resolving the current wave first!'); blk(); scrl(); return; }
+
+      // Feed command to StepRunner — it gates wave-start commands in order
+      const result = runner.process(cmd);
+      if (result.type === 'advance' || result.type === 'complete') {
+        ln('lok', '✓ ' + result.msg);
+        renderSteps();
+        // Start the wave that corresponds to the step that just advanced
+        // runner.current is now AFTER the step that just passed, so wave index = runner.current - 1
+        startWave(runner.current - 1);
+        blk(); ln('lm', 'Resolve conflicts by clicking Keep Ours / Keep Theirs in the panel →');
+      } else if (result.type === 'wrong') { ln('le', result.msg); ln('lm', '💡 ' + result.hint); }
+      else if (result.type === 'hint') { ln('lm', '💡 ' + result.msg); }
+      else { ln('le', 'Try: git merge <branch-name>'); }
+      blk(); scrl();
+    }
+
+    GitEngine.startTimer(document.getElementById('timer'));
+
+    // Overlay commands generated from WAVES data — no hardcoded branch names
+    GitOverlay.init({
+      gameId: 'merge-mayhem', title: '⚔️ Merge Conflict Mayhem', tagline: 'Survive ' + WAVES.length + ' waves of merge conflicts',
+      objective: 'Trigger each merge wave with the correct git merge command, then resolve every conflict by choosing which version of the code to keep. Clear all ' + WAVES.length + ' waves to win.',
+      howToPlay: ['Type the merge command shown for each wave to trigger the conflicts.', 'Each conflict appears as a card in the right panel showing "ours" (HEAD) vs "theirs" (incoming branch).', 'Click <strong>Keep Ours</strong> or <strong>Keep Theirs</strong> to resolve each conflict.', 'All conflicts in a wave must be resolved before the next wave can begin.', 'Wave escalation: ' + WAVES.map((w, i) => 'Wave ' + (i + 1) + ': ' + w.conflicts.length + ' conflicts').join(', ') + '.'],
+      commands: WAVES.map((w, i) => ({ cmd: 'git merge ' + w.branch, desc: 'Trigger Wave ' + (i + 1) + ' — ' + w.conflicts.length + ' file conflicts' })).concat([{ cmd: 'hint', desc: 'Show the next merge command needed' }]),
+      tips: ['You cannot type the next wave command until all current conflicts are resolved.', 'In real git, &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD is your current branch; &gt;&gt;&gt;&gt;&gt;&gt;&gt; is the incoming.', '======= is the divider between conflicting versions.', 'Score = ' + POINTS_PER_CONFLICT + ' points per resolved conflict — max score is ' + WAVES.reduce((s, w) => s + w.conflicts.length, 0) * POINTS_PER_CONFLICT + '.', 'Speed matters — lower time beats same-score entries on the leaderboard.'],
+      scoring: 'Timer starts on page load. Stops when the final conflict in Wave ' + WAVES.length + ' is resolved. Each resolved conflict = ' + POINTS_PER_CONFLICT + ' points.',
+    });
+
+    renderSteps();
+    ln('o', '╔══════════════════════════════════════╗');
+    ln('o', '║     ⚔️  MERGE CONFLICT MAYHEM          ║');
+    ln('o', '╚══════════════════════════════════════╝');
+    blk();
+    ln('o', WAVES.length + ' waves of merge conflicts await. Type the merge');
+    ln('o', 'command to start each wave, then resolve each');
+    ln('o', 'conflict by choosing which version to keep.');
+    blk();
+    ln('lstep', '▶ START: ' + STEPS[0].prompt);
+    blk();
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (GS.hidx < GS.hist.length - 1) { GS.hidx++; ci.value = GS.hist[GS.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (GS.hidx > 0) { GS.hidx--; ci.value = GS.hist[GS.hidx] || ''; } else { GS.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>

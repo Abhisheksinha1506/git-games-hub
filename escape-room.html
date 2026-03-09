@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚪 Repo Escape Room</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Playfair+Display:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'Share Tech Mono', 'Fira Mono', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --amber: #e8a23a;
+      --green: #3dba5e;
+      --red: #e05555;
+      --txt: #b8a898;
+      --brd: #1c1e26;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #1a1f2a;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .h-t {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--amber);
+      letter-spacing: 2px;
+    }
+
+    .hright {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timer {
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 2px;
+      font-weight: bold;
+      min-width: 48px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--amber);
+      border: 1px solid #3a2a10;
+      padding: 4px 10px;
+      background: rgba(232, 162, 58, .1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 0 0 47%;
+      border-right: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tbar {
+      background: #2a2f3a;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .tin {
+      display: flex;
+      padding: 7px 12px;
+      background: #0e1015;
+      border-top: 1px solid var(--brd);
+      align-items: center;
+    }
+
+    .prom {
+      color: var(--green);
+      margin-right: 6px;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--amber);
+      font-family: inherit;
+      font-size: 12px;
+      caret-color: var(--amber);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--amber);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--green);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .le {
+      color: var(--red);
+    }
+
+    .lok {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .lstep {
+      color: var(--cyan);
+    }
+
+    .game-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0d0f14;
+      overflow: hidden;
+    }
+
+    .gp-section {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .gph {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .room-card {
+      border: 1px solid var(--brd);
+      padding: 8px;
+      transition: all .3s;
+    }
+
+    .room-card.unlocked {
+      border-color: var(--green);
+      background: rgba(61, 186, 94, .04);
+    }
+
+    .room-name {
+      font-size: 10px;
+      color: var(--amber);
+      margin-bottom: 2px;
+    }
+
+    .room-status {
+      font-size: 9px;
+      letter-spacing: 1px;
+    }
+
+    .room-status.locked {
+      color: var(--red);
+    }
+
+    .room-status.unlocked {
+      color: var(--green);
+    }
+
+    .room-hint {
+      font-size: 9px;
+      color: #ffffff;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    .key-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid var(--green);
+      background: rgba(61, 186, 94, .07);
+      font-size: 9px;
+      color: var(--green);
+      border-radius: 1px;
+      margin: 2px;
+    }
+
+    .prog-bar {
+      height: 3px;
+      background: #1a1f2a;
+      margin-top: 8px;
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--amber));
+      transition: width .5s;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 class="h-t">🚪 Repo Escape Room</h1>
+    <div class="hright">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer">00:00</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom">~/repo $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder='git grep "keyword" -- "room1.txt"' maxlength="512"></div>
+    </div>
+    <div class="game-panel">
+      <div class="gp-section">
+        <div class="gph">🚪 Rooms</div>
+        <div class="room-grid" id="room-grid"></div>
+        <div class="prog-bar">
+          <div class="prog-fill" id="escape-prog" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="gp-section">
+        <div class="gph">🔑 Keys</div>
+        <div id="keys-display"><span style="font-size:10px;color:#ffffff;font-style:italic;">None yet.</span></div>
+      </div>
+      <div class="gp-section" style="flex:1;overflow-y:auto;">
+        <div class="gph">📋 Steps</div>
+        <div id="step-list"></div>
+      </div>
+      <div style="padding:10px 16px;font-size:10px;color:#ffffff;line-height:1.9;">
+        <div style="color:var(--amber);margin-bottom:4px;">COMMANDS</div>
+        <div>git ls-files — see all files</div>
+        <div>git grep "word" -- "file.txt"</div>
+        <div>git show room1.txt — read file</div>
+        <div>hint — get a nudge</div>
+        <div>clear — clear terminal</div>
+      </div>
+    </div>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'escape-room';
+
+    // Single source of truth — all room data in one place
+    const ROOMS = [
+      {
+        id: 'room1', name: 'Server Room', file: 'room1.txt', keyword: 'crimson', hint: 'Color of the blinking alert LED',
+        content: 'SERVER ROOM LOG\n================\nAccess granted: 2023-01-15\nStatus: LOCKDOWN\n\nNote from sysadmin:\nThe alert LED flashed crimson before the lockdown.\nOverride code is hidden in this file: crimson'
+      },
+      {
+        id: 'room2', name: 'The Archive', file: 'room2.txt', keyword: 'phantom', hint: 'The name of the missing encrypted file',
+        content: 'ARCHIVE INDEX\n==============\nFile 001: annual_report.pdf — PRESENT\nFile 002: backup_logs.zip — PRESENT\nFile 003: phantom_protocol.enc — MISSING\nFile 004: user_records.db — PRESENT\n\nThe phantom file holds the passcode: phantom'
+      },
+      {
+        id: 'room3', name: 'The Lab', file: 'room3.txt', keyword: 'ultraviolet', hint: 'The spectrum beyond visible light',
+        content: 'LAB NOTES — CLASSIFIED\n========================\nExperiment 47-B: completed\nTest subject responded to ultraviolet exposure.\nSeal the lab with the passcode: ultraviolet'
+      },
+      {
+        id: 'room4', name: 'The Exit', file: 'room4.txt', keyword: 'liberty', hint: 'What you gain when you escape',
+        content: 'EXIT PROTOCOL\n==============\nAll rooms must be unlocked.\nFinal word to freedom: liberty\n\nCollect it with:\ngit grep "liberty" -- "room4.txt"'
+      },
+    ];
+
+    // Steps generated from ROOMS — single source of truth (no hardcoded file names)
+    const STEPS = [
+      {
+        label: 'git ls-files', prompt: 'List all files: git ls-files', hint: 'Type: git ls-files', cmd_example: 'git ls-files',
+        success_msg: 'Files found! Now grep each room for the hidden keyword.',
+        check: cmd => cmd.trim() === 'git ls-files'
+      },
+      ...ROOMS.map(r => ({
+        label: 'git grep "' + r.keyword + '" -- "' + r.file + '"',
+        prompt: 'Find the key in ' + r.name + ': git grep "' + r.keyword + '" -- "' + r.file + '"',
+        hint: 'Hint for this room: ' + r.hint + '. Try: git grep "' + r.keyword + '" -- "' + r.file + '"',
+        cmd_example: 'git grep "' + r.keyword + '" -- "' + r.file + '"',
+        success_msg: 'Key found: "' + r.keyword + '" — ' + r.name + ' unlocked!',
+        wrong_msg: 'That grep did not find the key. Try: git grep "' + r.keyword + '" -- "' + r.file + '"',
+        check: cmd => {
+          const kw = r.keyword, fl = r.file;
+          // Accept both 'room1.txt' and 'room1' but require exact file token match
+          const hasFile = cmd.includes(fl) || new RegExp('(?:^|\\s|--|["\'])' + fl.replace('.txt', '') + '(?:["\']|\\s|$)').test(cmd);
+          return cmd.includes('git grep') && cmd.toLowerCase().includes(kw) && hasFile;
+        },
+      })),
+    ];
+
+    const GS = { unlocked: new Set(), keys: [], hist: [], hidx: -1 };
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+
+    function ln(cls, txt) { const s = document.createElement('span'); s.className = 'ln l' + cls; s.textContent = txt; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln'; s.textContent = ''; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    function renderRooms() {
+      const grid = document.getElementById('room-grid');
+      grid.innerHTML = ROOMS.map(r => {
+        const u = GS.unlocked.has(r.id);
+        return '<div class="room-card' + (u ? ' unlocked' : '') + '"><div class="room-name">' + (u ? '🔓' : '🔒') + ' ' + r.name + '</div><div class="room-status ' + (u ? 'unlocked' : 'locked') + '">' + (u ? '● OPEN' : '○ LOCKED') + '</div><div class="room-hint">' + r.hint + '</div></div>';
+      }).join('');
+      document.getElementById('escape-prog').style.width = (GS.unlocked.size / ROOMS.length * 100) + '%';
+      const kd = document.getElementById('keys-display');
+      kd.innerHTML = GS.keys.length ? GS.keys.map(k => '<span class="key-chip">' + k + '</span>').join('') : '<span style="font-size:10px;color:#ffffff;font-style:italic;">None yet.</span>';
+    }
+
+    const runner = new GitEngine.StepRunner(STEPS, {
+      onComplete: () => {
+        const secs = GitEngine.stopTimer();
+        setTimeout(() => GitEngine.showCompletionModal(GAME_ID, secs), 700);
+      }
+    });
+    function renderSteps() { GitEngine.renderStepProgress(document.getElementById('step-list'), STEPS, runner.current); }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      GS.hist.unshift(cmd); if (GS.hist.length > 60) GS.hist.pop(); GS.hidx = -1;
+      ln('c', cmd); blk();
+      if (cmd === 'clear') { out.innerHTML = ''; return; }
+      if (cmd === 'git ls-files') { ROOMS.forEach(r => ln('lo', r.file)); blk(); }
+      else if (/git show/.test(cmd) || /cat\s/.test(cmd)) {
+        const fileArg = cmd.split(/\s+/).slice(-1)[0].replace(/['"]/g, '');
+        const r = ROOMS.find(x => x.file === fileArg || x.id === fileArg || x.file === fileArg + '.txt');
+        if (r) { ln('lo', r.content); blk(); } else { ln('le', 'fatal: not a git object: ' + fileArg); }
+      } else if (/git grep/.test(cmd)) {
+        let found = false;
+        ROOMS.forEach(r => {
+          if (cmd.toLowerCase().includes(r.keyword) || cmd.includes(r.file.replace('.txt', ''))) {
+            if (cmd.toLowerCase().includes(r.keyword)) {
+              ln('lok', r.file + ': ' + r.keyword + ' — key found!'); found = true;
+              if (!GS.unlocked.has(r.id)) { GS.unlocked.add(r.id); GS.keys.push(r.keyword); renderRooms(); }
+            } else if (cmd.includes(r.file.replace('.txt', ''))) { ln('lm', '(no matches in ' + r.file + ' — try a different keyword)'); found = true; }
+          }
+        });
+        if (!found) ln('lm', '(no matches found — check the room hint for the keyword)');
+        blk();
+      }
+      const result = runner.process(cmd);
+      if (result.type === 'advance' || result.type === 'complete') {
+        ln('lok', '✓ ' + result.msg);
+        if (!result.final) { blk(); ln('lstep', '▶ NEXT: ' + result.nextPrompt); }
+        else { ln('lok', '🎉 ALL ROOMS UNLOCKED! You escaped!'); }
+        renderSteps();
+      } else if (result.type === 'wrong') { ln('le', result.msg); ln('lm', '💡 ' + result.hint); }
+      else if (result.type === 'hint') { ln('lm', '💡 ' + result.msg); }
+      else if (result.type === 'help') { ln('lo', 'Commands: git ls-files, git grep "word" -- "file.txt", git show file.txt, hint, clear'); }
+      blk(); scrl();
+    }
+
+    GitEngine.startTimer(document.getElementById('timer'));
+
+    // Overlay tips generated from ROOMS data — no hardcoded room names or file names
+    const roomOrder = ROOMS.map((r, i) => 'Room ' + (i + 1)).join(' → ');
+    const firstFile = ROOMS[0].file;
+    GitOverlay.init({
+      gameId: 'escape-room', title: '🚪 Repo Escape Room', tagline: 'Find hidden keywords to unlock each room',
+      objective: 'You are locked in a repository with ' + ROOMS.length + ' rooms. Each room\'s file contains a hidden keyword. Use git grep to find each keyword and unlock all rooms to escape.',
+      howToPlay: ['Start with <code>git ls-files</code> to see what files are in the repo.', 'Use <code>git show &lt;filename&gt;</code> to read the contents of any file.', 'Each file has a hidden keyword — check the sidebar hint for a clue.', 'Run <code>git grep "keyword" -- "' + firstFile + '"</code> to find and unlock the first room.', 'Unlock all ' + ROOMS.length + ' rooms in order — the next grep step is only revealed after the previous unlock.'],
+      commands: [{ cmd: 'git ls-files', desc: 'List all tracked files in the repository' }, { cmd: 'git show &lt;file&gt;', desc: 'Display the contents of a file' }, { cmd: 'git grep "word" -- "file"', desc: 'Search for a pattern in a specific file' }, { cmd: 'hint', desc: 'Get a clue about the keyword for the current room' }],
+      tips: ['Quotes around keyword and filename are optional: <code>git grep crimson -- room1.txt</code> works too.', 'Run <code>git show ' + firstFile + '</code> first to read the file and spot the keyword yourself.', 'The sidebar hint describes the keyword thematically — think about the clue!', 'Rooms must be unlocked in order: ' + roomOrder + '.', 'git grep is one of the most useful real-world git commands for searching codebases.'],
+      scoring: 'Timer starts on page load. Stops when the final room is unlocked with the correct grep. All ' + (ROOMS.length + 1) + ' steps (ls-files + ' + ROOMS.length + ' greps) must be completed in sequence.',
+    });
+
+    renderSteps(); renderRooms();
+    ln('o', '╔══════════════════════════════════════╗');
+    ln('o', '║      🚪 REPO ESCAPE ROOM              ║');
+    ln('o', '╚══════════════════════════════════════╝');
+    blk();
+    ln('o', 'You are locked inside a repository. Each of the');
+    ln('o', ROOMS.length + ' rooms has a hidden keyword. Use git grep to');
+    ln('o', 'find each keyword and unlock every room to escape.');
+    blk();
+    ln('lstep', '▶ START: ' + STEPS[0].prompt);
+    blk();
+    ln('lm', "Type  hint  for the current room's keyword hint.");
+    blk();
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (GS.hidx < GS.hist.length - 1) { GS.hidx++; ci.value = GS.hist[GS.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (GS.hidx > 0) { GS.hidx--; ci.value = GS.hist[GS.hidx] || ''; } else { GS.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>

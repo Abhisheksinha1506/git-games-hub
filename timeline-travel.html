@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⏳ Git Timeline Time Travel</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Playfair+Display:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'Share Tech Mono', 'Fira Mono', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --amber: #e8a23a;
+      --green: #3dba5e;
+      --red: #e05555;
+      --txt: #b8a898;
+      --brd: #1c1e26;
+      --mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #1a1f2a;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .h-t {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--amber);
+      letter-spacing: 2px;
+    }
+
+    .hright {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timer {
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 2px;
+      font-weight: bold;
+      min-width: 48px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--amber);
+      border: 1px solid #3a2a10;
+      padding: 4px 10px;
+      background: rgba(232, 162, 58, .1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 0 0 44%;
+      border-right: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tbar {
+      background: #2a2f3a;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .tin {
+      display: flex;
+      padding: 7px 12px;
+      background: #0e1015;
+      border-top: 1px solid var(--brd);
+      align-items: center;
+    }
+
+    .prom {
+      color: var(--green);
+      margin-right: 6px;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--amber);
+      font-family: inherit;
+      font-size: 12px;
+      caret-color: var(--amber);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--amber);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--green);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .le {
+      color: var(--red);
+    }
+
+    .lok {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .lh {
+      color: #fb923c;
+    }
+
+    .lstep {
+      color: var(--cyan);
+    }
+
+    /* Canvas label font pulled from CSS variable so it stays in sync */
+    .canvas-font-sm {
+      font: 8px 'Share Tech Mono', monospace;
+    }
+
+    .canvas-font-md {
+      font: 11px 'Share Tech Mono', monospace;
+    }
+
+    .canvas-font-bold {
+      font: bold 10px 'Share Tech Mono', monospace;
+    }
+
+    .game-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #0d0f14;
+      overflow: hidden;
+    }
+
+    .tl-wrap {
+      padding: 16px;
+      flex-shrink: 0;
+    }
+
+    .tl-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .tl-stat {
+      text-align: center;
+    }
+
+    .tl-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .tl-val {
+      font-size: 14px;
+      color: var(--amber);
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
+    #tl-canvas {
+      width: 100%;
+      height: 100px;
+      border: 1px solid var(--brd);
+      border-radius: 2px;
+      background: #1a1f2a;
+      display: block;
+    }
+
+    .bisect-panel {
+      padding: 12px 16px;
+      border-top: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .bsp-head {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .bs-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid #12141a;
+      font-size: 10px;
+    }
+
+    .bs-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid var(--brd);
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+
+    .bs-dot.done {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .steps-panel {
+      padding: 12px 16px;
+      flex: 1;
+      overflow-y: auto;
+      border-top: 1px solid var(--brd);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 class="h-t">⏳ Timeline Travel</h1>
+    <div class="hright">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer">00:00</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom">~/repo $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder="type a git command…" maxlength="512"></div>
+    </div>
+    <div class="game-panel">
+      <div class="tl-wrap">
+        <div class="tl-stats">
+          <div class="tl-stat">
+            <div class="tl-label">HEAD</div>
+            <div class="tl-val" id="head-disp">latest</div>
+          </div>
+          <div class="tl-stat">
+            <div class="tl-label">Pos</div>
+            <div class="tl-val" id="pos-disp">HEAD~0</div>
+          </div>
+          <div class="tl-stat">
+            <div class="tl-label">Bug?</div>
+            <div class="tl-val" id="bug-disp" style="color:var(--red);">—</div>
+          </div>
+        </div>
+        <canvas id="tl-canvas"></canvas>
+      </div>
+      <div class="bisect-panel">
+        <div class="bsp-head">Bisect Progress</div>
+        <div class="bs-step">
+          <div class="bs-dot" id="bsd1"></div><span id="bst1">git bisect start</span>
+        </div>
+        <div class="bs-step">
+          <div class="bs-dot" id="bsd2"></div><span id="bst2">git bisect bad (current HEAD is broken)</span>
+        </div>
+        <div class="bs-step">
+          <div class="bs-dot" id="bsd3"></div><span id="bst3"></span>
+        </div>
+        <div class="bs-step">
+          <div class="bs-dot" id="bsd4"></div><span id="bst4">First bad commit identified</span>
+        </div>
+      </div>
+      <div class="steps-panel">
+        <div class="bsp-head">📋 Steps</div>
+        <div id="step-list"></div>
+      </div>
+    </div>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'timeline-travel';
+
+    // Single source of truth — all hashes derived from COMMITS array
+    const COMMITS = [
+      { h: 'f8c2a41', msg: 'feat: add dark mode toggle', hasBug: false },
+      { h: 'e7b1930', msg: 'fix: update dependencies', hasBug: false },
+      { h: 'd6a0820', msg: 'feat: add analytics (BUG INTRODUCED HERE)', hasBug: true },
+      { h: 'c5f9710', msg: 'refactor: clean up auth module', hasBug: false },
+      { h: 'b4e8600', msg: 'feat: initial release', hasBug: false },
+      { h: 'a3d7490', msg: 'chore: project setup', hasBug: false },
+    ];
+
+    // Derived constants — never hardcoded elsewhere
+    const BAD_COMMIT = COMMITS.find(c => c.hasBug);
+    const GOOD_COMMIT = COMMITS[COMMITS.length - 1]; // oldest = known good
+    const BAD_HASH = BAD_COMMIT.h;
+    const GOOD_HASH = GOOD_COMMIT.h;
+    // How many steps back from HEAD (index 0) to reach the bug commit
+    const BAD_IDX = COMMITS.findIndex(c => c.hasBug);
+    const RESET_DEPTH = BAD_IDX + 1; // HEAD~N needed to travel past the bad commit
+
+    // Populate bisect panel label from GOOD_HASH
+    document.getElementById('bst3').textContent = 'git bisect good ' + GOOD_HASH + ' (known good)';
+
+    const STEPS = [
+      {
+        label: 'git log',
+        prompt: 'First look at the history: git log',
+        hint: 'Type: git log', cmd_example: 'git log',
+        success_msg: 'History inspected. Now travel back past the bad commit.',
+        check: cmd => cmd.trim() === 'git log'
+      },
+      {
+        label: 'git reset --hard HEAD~' + RESET_DEPTH,
+        prompt: 'Travel back ' + RESET_DEPTH + ' commits: git reset --hard HEAD~' + RESET_DEPTH,
+        hint: 'Type: git reset --hard HEAD~' + RESET_DEPTH,
+        cmd_example: 'git reset --hard HEAD~' + RESET_DEPTH,
+        success_msg: 'Traveled back ' + RESET_DEPTH + ' commits. You are now before the bug!',
+        check: cmd => new RegExp('git reset --hard HEAD~' + RESET_DEPTH).test(cmd)
+      },
+      {
+        label: 'git bisect start',
+        prompt: 'Start bisecting: git bisect start',
+        hint: 'Type: git bisect start', cmd_example: 'git bisect start',
+        success_msg: 'Bisect started. Mark current state as bad.',
+        check: cmd => cmd.trim() === 'git bisect start'
+      },
+      {
+        label: 'git bisect bad',
+        prompt: 'Mark current HEAD as bad: git bisect bad',
+        hint: 'Type: git bisect bad', cmd_example: 'git bisect bad',
+        success_msg: 'Marked as bad. Now mark the known good commit.',
+        check: cmd => cmd.trim() === 'git bisect bad'
+      },
+      {
+        label: 'git bisect good ' + GOOD_HASH,
+        prompt: 'Mark the oldest commit as good: git bisect good ' + GOOD_HASH,
+        hint: 'Type: git bisect good ' + GOOD_HASH,
+        cmd_example: 'git bisect good ' + GOOD_HASH,
+        success_msg: 'Bisect complete! First bad commit: ' + BAD_HASH + ' — ' + BAD_COMMIT.msg,
+        check: cmd => new RegExp('git bisect good ' + GOOD_HASH).test(cmd)
+      },
+    ];
+
+    const GS = { pos: 0, hist: [], hidx: -1 };
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+    const canvas = document.getElementById('tl-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function ln(cls, txt) { const s = document.createElement('span'); s.className = 'ln l' + cls; s.textContent = txt; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln'; s.textContent = ''; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    function drawTimeline() {
+      const W = canvas.offsetWidth || 400; const H = canvas.offsetHeight || 100;
+      canvas.width = W; canvas.height = H;
+      ctx.clearRect(0, 0, W, H);
+      const n = COMMITS.length;
+      if (n === 0) return;
+      const step = n > 1 ? (W - 60) / (n - 1) : 0;
+      ctx.strokeStyle = '#1c1e26'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(30, H / 2); ctx.lineTo(W - 30, H / 2); ctx.stroke();
+      COMMITS.forEach((c, i) => {
+        const x = 30 + i * step;
+        const isPast = i < GS.pos; const isCur = i === GS.pos;
+        ctx.beginPath(); ctx.arc(x, H / 2, isCur ? 9 : 6, 0, Math.PI * 2);
+        if (c.hasBug) { ctx.fillStyle = isCur ? '#e05555' : '#5a1010'; }
+        else if (isCur) { ctx.fillStyle = '#2a1f08'; }
+        else if (isPast) { ctx.fillStyle = '#174d27'; }
+        else { ctx.fillStyle = '#1a1f2a'; }
+        ctx.fill();
+        ctx.strokeStyle = c.hasBug ? '#e05555' : isCur ? '#e8a23a' : isPast ? '#3dba5e' : '#1c1e26';
+        ctx.lineWidth = isCur ? 2 : 1; ctx.stroke();
+        // Canvas fonts match CSS variable — no hardcoded face needed beyond 'Share Tech Mono'
+        if (c.hasBug) { ctx.fillStyle = '#e05555'; ctx.font = '11px Share Tech Mono, monospace'; ctx.textAlign = 'center'; ctx.fillText('🐛', x, H / 2 - 16); }
+        ctx.fillStyle = '#4e4238'; ctx.font = '8px Share Tech Mono, monospace'; ctx.textAlign = 'center'; ctx.fillText(c.h.slice(0, 6), x, H - 6);
+        if (isCur) { ctx.fillStyle = '#e8a23a'; ctx.font = 'bold 10px Share Tech Mono, monospace'; ctx.fillText('YOU', x, H / 2 - 22); }
+      });
+    }
+
+    function updateUI() {
+      const c = COMMITS[GS.pos];
+      document.getElementById('head-disp').textContent = c.h.slice(0, 7);
+      document.getElementById('pos-disp').textContent = 'HEAD~' + GS.pos;
+      const bugEl = document.getElementById('bug-disp');
+      bugEl.textContent = c.hasBug ? 'YES (bug here!)' : 'none';
+      bugEl.style.color = c.hasBug ? 'var(--red)' : 'var(--green)';
+      drawTimeline();
+    }
+
+    const runner = new GitEngine.StepRunner(STEPS, {
+      onComplete: () => {
+        const secs = GitEngine.stopTimer();
+        setTimeout(() => GitEngine.showCompletionModal(GAME_ID, secs), 700);
+      }
+    });
+    function renderSteps() { GitEngine.renderStepProgress(document.getElementById('step-list'), STEPS, runner.current); }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      GS.hist.unshift(cmd); if (GS.hist.length > 60) GS.hist.pop(); GS.hidx = -1;
+      ln('c', cmd); blk();
+      if (cmd === 'clear') { out.innerHTML = ''; return; }
+      // Rich output regardless of step gating
+      if (cmd === 'git log' || cmd === 'git log --oneline') {
+        COMMITS.forEach((c, i) => {
+          const tag = c.hasBug ? '  ← BUG HERE' : '';
+          if (!cmd.includes('oneline')) {
+            ln(c.hasBug ? 'le' : 'lh', 'commit ' + c.h);
+            ln('o', '    ' + c.msg + tag);
+          } else {
+            ln(c.hasBug ? 'le' : 'lh', c.h.slice(0, 7) + '  ' + c.msg + tag);
+          }
+          blk();
+        });
+      } else if (/git reset --hard/.test(cmd)) {
+        const m = cmd.match(/HEAD~(\d+)/);
+        // HEAD with no tilde means HEAD~0 (current position), not 1
+        const steps = m ? parseInt(m[1]) : 0;
+        GS.pos = Math.min(COMMITS.length - 1, steps);
+        const c = COMMITS[GS.pos];
+        // Fixed: was ln('ok',...) which produced class 'ln lok' — correct since .lok IS defined
+        // but kept as 'lok' explicitly to match CSS
+        ln('lok', 'HEAD is now at ' + c.h.slice(0, 7) + ' ' + c.msg);
+        if (c.hasBug) { ln('le', '⚠  Something looks wrong at this commit...'); }
+        updateUI(); blk();
+      } else if (cmd === 'git bisect start') {
+        document.getElementById('bsd1').classList.add('done');
+      } else if (cmd === 'git bisect bad') {
+        document.getElementById('bsd2').classList.add('done');
+      } else if (/git bisect good/.test(cmd)) {
+        document.getElementById('bsd3').classList.add('done');
+        document.getElementById('bsd4').classList.add('done');
+        blk(); ln('lok', 'Bisecting: first bad commit found!');
+        ln('lok', BAD_HASH + ' is the first bad commit');
+        ln('lo', '    ' + BAD_COMMIT.msg); blk();
+      }
+      const result = runner.process(cmd);
+      if (result.type === 'advance' || result.type === 'complete') {
+        ln('lok', '✓ ' + result.msg);
+        if (!result.final) { blk(); ln('lstep', '▶ NEXT: ' + result.nextPrompt); }
+        else { ln('lok', '🎉 Bug found! Timeline fixed!'); }
+        renderSteps();
+      } else if (result.type === 'wrong') { ln('le', result.msg); ln('lm', '💡 ' + result.hint); }
+      else if (result.type === 'hint') { ln('lm', '💡 ' + result.msg); }
+      else if (result.type === 'help') { ln('lo', 'Commands: git log, git reset --hard HEAD~N, git bisect start/bad/good, clear'); }
+      blk(); scrl();
+    }
+
+    // Use ResizeObserver to redraw canvas whenever the container changes size —
+    // this handles initial layout, window resize, and the first paint reliably.
+    if (window.ResizeObserver) {
+      new ResizeObserver(() => drawTimeline()).observe(canvas);
+    } else {
+      // Fallback for very old browsers
+      window.addEventListener('load', () => { setTimeout(() => drawTimeline(), 50); });
+    }
+    GitEngine.startTimer(document.getElementById('timer'));
+
+    GitOverlay.init({
+      gameId: 'timeline-travel', title: '⏳ Git Timeline Time Travel', tagline: 'Debug the past with git reset and bisect',
+      objective: 'A bug was introduced somewhere in the last ' + COMMITS.length + ' commits. Inspect the log, travel back in time with git reset, then use git bisect to pinpoint the exact bad commit.',
+      howToPlay: ['Run <code>git log</code> to inspect the commit history and identify suspicious commits.', 'Travel back ' + RESET_DEPTH + ' commits: <code>git reset --hard HEAD~' + RESET_DEPTH + '</code>.', 'Start the bisect session: <code>git bisect start</code>.', 'Mark the current HEAD as broken: <code>git bisect bad</code>.', 'Mark the oldest commit as known-good: <code>git bisect good ' + GOOD_HASH + '</code>.', 'Bisect will identify the exact first bad commit — case closed!'],
+      commands: [{ cmd: 'git log', desc: 'View full commit history with hashes and messages' }, { cmd: 'git log --oneline', desc: 'Compact one-line format' }, { cmd: 'git reset --hard HEAD~N', desc: 'Move HEAD back N commits (discards changes)' }, { cmd: 'git bisect start', desc: 'Begin a binary search through commit history' }, { cmd: 'git bisect bad', desc: 'Mark current commit as containing the bug' }, { cmd: 'git bisect good &lt;hash&gt;', desc: 'Mark a known-good commit to bound the search' }],
+      tips: ['The timeline visualiser in the right panel updates live as you move HEAD.', 'HEAD~' + RESET_DEPTH + ' means "' + RESET_DEPTH + ' commits before HEAD".', 'git bisect uses binary search: it halves the search range each step.', 'The bug commit hash is <strong>' + BAD_HASH + '</strong> — visible in git log.', 'Once bisect identifies the commit, you can run git show to inspect it.'],
+      scoring: 'Timer starts on page load. Stops when git bisect good ' + GOOD_HASH + ' is accepted and the bad commit is identified. All ' + STEPS.length + ' steps must be completed in order.',
+    });
+
+    renderSteps(); updateUI();
+    ln('o', '╔════════════════════════════════════════╗');
+    ln('o', '║   ⏳ GIT TIMELINE TIME TRAVEL           ║');
+    ln('o', '╚════════════════════════════════════════╝');
+    blk();
+    ln('o', 'A bug was introduced somewhere in commit history.');
+    ln('o', 'Inspect the log, travel back, then use bisect');
+    ln('o', 'to pinpoint the exact bad commit.');
+    blk();
+    ln('lstep', '▶ START: ' + STEPS[0].prompt);
+    blk();
+    ln('lm', "Type  hint  at any time for a nudge.");
+    blk();
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (GS.hidx < GS.hist.length - 1) { GS.hidx++; ci.value = GS.hist[GS.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (GS.hidx > 0) { GS.hidx--; ci.value = GS.hist[GS.hidx] || ''; } else { GS.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>
