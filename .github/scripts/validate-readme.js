@@ -7,9 +7,9 @@ const GAMES = [
   'escape-room', 'merge-mayhem', 'timeline-travel'
 ];
 const ROW_REGEX = /^\|\s*[🏅🥇🥈🥉\d🏆]+\s*\|\s*@([\w-]+)\s*\|\s*(\d{2}:\d{2})\s*\|\s*(\d{4}-\d{2}-\d{2})\s*\|$/;
-const HEADER    = '| Rank | Player | Time | Date |';
-const DIVIDER   = '|------|--------|------|------|';
-const MEDALS    = ['🥇','🥈','🥉'];
+const HEADER = '| Rank | Player | Time | Date |';
+const DIVIDER = '|------|--------|------|------|';
+const MEDALS = ['🥇', '🥈', '🥉'];
 
 const readmePath = process.argv[2] || 'README.md';
 let readme;
@@ -20,35 +20,70 @@ try {
   process.exit(1);
 }
 
-let errors      = [];
-let warnings    = [];
-let changed     = false;
+let errors = [];
+let warnings = [];
+let changed = false;
+
+// ── Row Insertion Mode ───────────────────────────────────────────
+const insertFlag = process.argv.indexOf('--insert');
+if (insertFlag !== -1 && process.argv[insertFlag + 1]) {
+  const newRow = process.argv[insertFlag + 1].trim();
+  const m = newRow.match(ROW_REGEX);
+  if (!m) {
+    console.error(`❌ Cannot insert malformed row: ${newRow}`);
+    process.exit(1);
+  }
+
+  // Identify which game this row belongs to by checking the README content
+  // Note: in a more complex setup we'd pass gameId, but here we can infer 
+  // if the user is submitting a score that matches a specific game prompt.
+  // Actually, let's add --game parameter to be safe.
+  const gameFlag = process.argv.indexOf('--game');
+  const targetGame = gameFlag !== -1 ? process.argv[gameFlag + 1] : null;
+
+  if (targetGame && GAMES.includes(targetGame)) {
+    const startTag = `<!-- LEADERBOARD:${targetGame} -->`;
+    const tagIdx = readme.indexOf(startTag);
+    if (tagIdx !== -1) {
+      // Insert right after the start tag (it will be sorted anyway)
+      readme = readme.slice(0, tagIdx + startTag.length) + '\n' + newRow + readme.slice(tagIdx + startTag.length);
+      changed = true;
+      console.log(`✅ Inserted row into ${targetGame} section.`);
+    } else {
+      console.error(`❌ Could not find leaderboard markers for ${targetGame}`);
+      process.exit(1);
+    }
+  } else {
+    console.error(`❌ Must specify a valid --game [${GAMES.join('|')}] for insertion.`);
+    process.exit(1);
+  }
+}
 
 // ── Helpers ───────────────────────────────────────────────────────
 function timeToSecs(t) {
-  const [m,s] = t.split(':').map(Number);
+  const [m, s] = t.split(':').map(Number);
   return m * 60 + s;
 }
 
 function rankIcon(i) {
-  return MEDALS[i] || `\`${i+1}\``;
+  return MEDALS[i] || `\`${i + 1}\``;
 }
 
 // ── Process each leaderboard section ──────────────────────────────
 for (const game of GAMES) {
   const startTag = `<!-- LEADERBOARD:${game} -->`;
-  const endTag   = `<!-- END:${game} -->`;
-  const start    = readme.indexOf(startTag);
-  const end      = readme.indexOf(endTag);
+  const endTag = `<!-- END:${game} -->`;
+  const start = readme.indexOf(startTag);
+  const end = readme.indexOf(endTag);
 
   if (start === -1 || end === -1) {
     warnings.push(`⚠️  Leaderboard markers for '${game}' not found in README.md — skipping.`);
     continue;
   }
 
-  const before  = readme.slice(0, start + startTag.length);
+  const before = readme.slice(0, start + startTag.length);
   const section = readme.slice(start + startTag.length, end);
-  const after   = readme.slice(end);
+  const after = readme.slice(end);
 
   // Collect all valid score rows in this section
   const rows = [];
@@ -69,7 +104,7 @@ for (const game of GAMES) {
 
     // Validate date
     const submittedDate = new Date(date);
-    const now           = new Date();
+    const now = new Date();
     // Allow for a bit of lag in PR review, but future dates are errors
     if (submittedDate > now) {
       errors.push(`❌  Date '${date}' for @${username} in '${game}' is in the future.`);
@@ -98,7 +133,7 @@ for (const game of GAMES) {
 
   const rebuilt = before + newSection + after;
   if (rebuilt !== readme) {
-    readme  = rebuilt;
+    readme = rebuilt;
     changed = true;
   }
 }
