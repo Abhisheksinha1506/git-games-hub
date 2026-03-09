@@ -312,7 +312,6 @@ window.GitEngine = (function () {
               placeholder="e.g. octocat" value="${_htmlEsc(savedUser)}"
               maxlength="39" autocomplete="off" spellcheck="false"
               aria-label="GitHub Username">
-            <button class="ge-ubtn" id="ge-update-btn">UPDATE ↻</button>
           </div>
 
           <div class="ge-lbl">Your Score Row (mandatory for leaderboard)</div>
@@ -320,7 +319,7 @@ window.GitEngine = (function () {
 
           <div class="ge-lbl">How to submit your score</div>
           <div class="ge-steps-box">
-            <div class="ge-step"><span class="ge-step-num">1.</span><span>Enter your GitHub username above, then click <span class="cmd">UPDATE</span>.</span></div>
+            <div class="ge-step"><span class="ge-step-num">1.</span><span>Enter your GitHub username above. The score row will update live.</span></div>
             <div class="ge-step"><span class="ge-step-num">2.</span><span>Click <span class="cmd">SUBMIT SCORE</span> below.</span></div>
             <div class="ge-step"><span class="ge-step-num">3.</span><span>That's it! The leaderboard updates automatically and you'll return to the hub. 🚀</span></div>
           </div>
@@ -409,8 +408,7 @@ window.GitEngine = (function () {
     // Initial render — async, but errors are caught internally
     _refresh().catch(() => { });
 
-    document.getElementById('ge-update-btn').addEventListener('click', () => { _refresh().catch(() => { }); });
-    document.getElementById('ge-uinput').addEventListener('keydown', e => { if (e.key === 'Enter') _refresh().catch(() => { }); });
+    document.getElementById('ge-uinput').addEventListener('input', () => { _refresh().catch(() => { }); });
 
     document.getElementById('ge-copy-btn').addEventListener('click', async () => {
       // Await refresh so score row is up-to-date before copying
