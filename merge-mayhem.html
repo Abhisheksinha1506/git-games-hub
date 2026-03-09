@@ -206,6 +206,8 @@
       flex-direction: column;
       background: #0d0f14;
       overflow: hidden;
+      font-family: var(--font-serif);
+      font-size: 11px;
     }
 
     .gp-top {
@@ -218,18 +220,18 @@
     }
 
     .gp-label {
-      font-family: var(--font-serif);
       font-size: 12px;
       letter-spacing: 2px;
       color: #ffffff;
       text-transform: uppercase;
+      font-family: var(--font-serif);
     }
 
     .gp-val {
-      font-family: var(--font-serif);
       font-size: 11px;
       color: var(--amber);
       font-weight: bold;
+      font-family: var(--font-serif);
     }
 
     .conflict-zone {
@@ -269,10 +271,10 @@
     .cb-head {
       background: #1a1f2a;
       padding: 6px 10px;
-      font-family: var(--font-serif);
       font-size: 11px;
       display: flex;
       justify-content: space-between;
+      font-family: var(--font-serif);
     }
 
     .cb-head .fname {
@@ -289,9 +291,9 @@
 
     .cb-body {
       padding: 8px 10px;
-      font-family: var(--font-serif);
       font-size: 11px;
       line-height: 1.8;
+      font-family: var(--font-serif);
     }
 
     .cb-ours {
@@ -321,7 +323,6 @@
       color: var(--txt);
       font-family: var(--font-serif);
       font-size: 11px;
-      font-weight: bold;
       cursor: pointer;
       transition: all .2s;
       text-align: center;
@@ -346,7 +347,7 @@
     .sp-head {
       font-family: var(--font-serif);
       font-size: 12px;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       color: var(--amber);
       text-transform: uppercase;
       margin-bottom: 12px;
@@ -394,10 +395,7 @@
           <span style="color:var(--amber);">git merge feature-branch</span><br>to start Wave 1.
         </div>
       </div>
-      <div class="step-panel" style="display:none;">
-        <div class="sp-head">📋 Waves</div>
-        <div id="step-list"></div>
-      </div>
+
     </div>
   </div>
   <script src="engine.js"></script>

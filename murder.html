@@ -299,7 +299,8 @@
     .lhnt {
       color: var(--purple);
       font-style: italic;
-      font-size: 13px;
+      font-size: 11px;
+      font-family: var(--font-serif);
     }
 
     .sp {
@@ -309,6 +310,7 @@
       background: var(--pbg);
       overflow: hidden;
       min-width: 0;
+      font-family: var(--font-serif);
     }
 
     .tabs {
@@ -320,7 +322,7 @@
     .tb {
       flex: 1;
       padding: 9px 2px;
-      font-family: 'Syne', sans-serif;
+      font-family: var(--font-serif);
       font-size: 12px;
       letter-spacing: .5px;
       color: #ffffff;
@@ -346,7 +348,7 @@
       overflow-y: auto;
       padding: 14px;
       display: none;
-      font-size: 13px;
+      font-size: 11px;
       line-height: 1.75;
     }
 
@@ -363,15 +365,14 @@
     }
 
     .cft {
-      font-family: 'Syne', sans-serif;
+      font-family: var(--font-serif);
       font-size: 12px;
       color: var(--cyan);
       margin-bottom: 3px;
-      letter-spacing: 2px;
     }
 
     .cfs {
-      font-family: 'Syne', sans-serif;
+      font-family: var(--font-serif);
       font-style: italic;
       color: #ffffff;
       font-size: 11px;
@@ -385,17 +386,17 @@
     }
 
     .cfl {
-      font-family: 'Syne', sans-serif;
       font-size: 12px;
       letter-spacing: 2px;
       color: var(--cyan);
       text-transform: uppercase;
       margin-bottom: 5px;
       font-weight: 700;
+      font-family: var(--font-serif);
     }
 
     .cfb {
-      font-family: 'Syne', sans-serif;
+      font-family: var(--font-serif);
       color: var(--txt);
       font-size: 11px;
       line-height: 1.85;
@@ -408,7 +409,7 @@
       color: var(--cyan);
       font-size: 11px;
       margin-top: 7px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       word-break: break-all;
     }
 
@@ -447,8 +448,7 @@
     }
 
     .pt {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
+      font-size: 11.5px;
       color: #ffffff;
       transition: color .4s;
     }
@@ -474,8 +474,7 @@
       padding: 8px 12px;
       background: rgba(176, 154, 248, .04);
       color: var(--purple);
-      font-family: 'Syne', sans-serif;
-      font-size: 12px;
+      font-size: 10px;
       letter-spacing: .8px;
       cursor: pointer;
       display: flex;
@@ -500,8 +499,7 @@
     .hb {
       padding: 10px 12px;
       color: var(--txt);
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
+      font-size: 11.5px;
       line-height: 1.7;
       display: none;
       background: rgba(0, 0, 0, .2);
@@ -517,7 +515,7 @@
       padding: 5px 9px;
       margin-top: 7px;
       color: var(--cyan);
-      font-size: 11px;
+      font-size: 10.5px;
       font-family: 'JetBrains Mono', monospace;
       word-break: break-all;
     }
@@ -645,7 +643,6 @@
     <div class="sp">
       <div class="tabs">
         <button class="tb on" id="tab-btn-case">📋 CASE</button>
-        <button class="tb" id="tab-btn-prog" style="display:none;">✓ PROGRESS</button>
         <button class="tb" id="tab-btn-hints">💡 HINTS</button>
         <button class="tb" id="tab-btn-graph">🌿 GRAPH</button>
       </div>
@@ -673,12 +670,7 @@
             &amp;&amp; echo 'You found the murderer!' || echo 'No cigar...'</div>
         </div>
       </div>
-      <div class="tp" id="tab-prog">
-        <div id="plist"></div>
-        <div style="margin-top:14px;"> <button id="reset-btn"
-            style="background:transparent;border:1px solid #151928;color:#ffffff;padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;">↺
-            RESET</button></div>
-      </div>
+
       <div class="tp" id="tab-hints">
         <div style="color:#ffffff;font-size:11px;margin-bottom:12px;line-height:1.6;">Hints unlock via <span
             style="color:var(--purple)">hint</span> or clicks.</div>
