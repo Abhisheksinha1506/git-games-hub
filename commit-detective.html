@@ -211,6 +211,8 @@
       flex-direction: column;
       background: #0d0f14;
       overflow: hidden;
+      font-family: var(--font-serif);
+      font-size: 11px;
     }
 
     .sp-section {
@@ -220,8 +222,8 @@
 
     .sp-head {
       font-family: var(--font-serif);
-      font-size: 15px;
-      letter-spacing: 3px;
+      font-size: 12px;
+      letter-spacing: 2px;
       color: var(--cyan);
       text-transform: uppercase;
       margin-bottom: 12px;
@@ -230,7 +232,7 @@
     .clue {
       padding: 10px 12px;
       border-bottom: 1px solid var(--brd);
-      font-size: 13px;
+      font-size: 11px;
       color: var(--txt);
       line-height: 1.6;
     }
@@ -246,8 +248,8 @@
       background: rgba(0, 0, 0, 0.2);
       border: 1px solid var(--brd);
       color: #ffffff;
-      font-family: var(--font-serif);
-      font-size: 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       margin-bottom: 6px;
@@ -275,7 +277,7 @@
     .sp-cmd-ref {
       padding: 14px 16px;
       font-family: var(--font-serif);
-      font-size: 14px;
+      font-size: 11px;
       color: #ffffff;
       line-height: 2.2;
     }
@@ -312,10 +314,7 @@
           spellcheck="false" placeholder="type a git command…" maxlength="512"></div>
     </div>
     <div class="sp">
-      <div class="sp-section" style="flex:1;overflow-y:auto;">
-        <div class="sp-head">📋 Steps</div>
-        <div id="step-list"></div>
-      </div>
+
       <div class="sp-section">
         <div class="sp-head">🔍 Clues</div>
         <div id="clues">

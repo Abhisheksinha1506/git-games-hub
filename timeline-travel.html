@@ -223,6 +223,8 @@
       flex-direction: column;
       background: #0d0f14;
       overflow: hidden;
+      font-family: var(--font-serif);
+      font-size: 11px;
     }
 
     .tl-wrap {
@@ -241,17 +243,19 @@
     }
 
     .tl-label {
-      font-size: 9px;
+      font-size: 12px;
       letter-spacing: 2px;
       color: #ffffff;
       text-transform: uppercase;
+      font-family: var(--font-serif);
     }
 
     .tl-val {
-      font-size: 14px;
+      font-size: 11px;
       color: var(--amber);
       font-weight: bold;
       margin-top: 2px;
+      font-family: var(--font-serif);
     }
 
     #tl-canvas {
@@ -271,8 +275,8 @@
 
     .bsp-head {
       font-family: var(--font-serif);
-      font-size: 15px;
-      letter-spacing: 3px;
+      font-size: 12px;
+      letter-spacing: 2px;
       color: var(--amber);
       text-transform: uppercase;
       margin-bottom: 12px;
@@ -284,7 +288,8 @@
       gap: 8px;
       padding: 4px 0;
       border-bottom: 1px solid #12141a;
-      font-size: 10px;
+      font-size: 11px;
+      font-family: var(--font-serif);
     }
 
     .bs-dot {
@@ -362,10 +367,7 @@
           <div class="bs-dot" id="bsd4"></div><span id="bst4">First bad commit identified</span>
         </div>
       </div>
-      <div class="steps-panel">
-        <div class="bsp-head">📋 Steps</div>
-        <div id="step-list"></div>
-      </div>
+
     </div>
   </div>
   <script src="engine.js"></script>

@@ -205,6 +205,8 @@
       flex-direction: column;
       background: #0d0f14;
       overflow: hidden;
+      font-family: var(--font-serif);
+      font-size: 11px;
     }
 
     .gp-section {
@@ -214,8 +216,8 @@
 
     .gph {
       font-family: var(--font-serif);
-      font-size: 15px;
-      letter-spacing: 3px;
+      font-size: 12px;
+      letter-spacing: 2px;
       color: var(--amber);
       text-transform: uppercase;
       margin-bottom: 12px;
@@ -239,14 +241,16 @@
     }
 
     .room-name {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--amber);
       margin-bottom: 2px;
+      font-family: var(--font-serif);
     }
 
     .room-status {
-      font-size: 9px;
+      font-size: 11px;
       letter-spacing: 1px;
+      font-family: var(--font-serif);
     }
 
     .room-status.locked {
@@ -258,10 +262,11 @@
     }
 
     .room-hint {
-      font-size: 9px;
+      font-size: 11px;
       color: #ffffff;
       margin-top: 3px;
       font-style: italic;
+      font-family: var(--font-serif);
     }
 
     .key-chip {
@@ -269,10 +274,11 @@
       padding: 2px 8px;
       border: 1px solid var(--green);
       background: rgba(61, 186, 94, .07);
-      font-size: 9px;
+      font-size: 11px;
       color: var(--green);
       border-radius: 1px;
       margin: 2px;
+      font-family: var(--font-serif);
     }
 
     .prog-bar {
@@ -320,10 +326,7 @@
         <div class="gph">🔑 Keys</div>
         <div id="keys-display"><span style="font-size:10px;color:#ffffff;font-style:italic;">None yet.</span></div>
       </div>
-      <div class="gp-section" style="flex:1;overflow-y:auto;">
-        <div class="gph">📋 Steps</div>
-        <div id="step-list"></div>
-      </div>
+
       <div class="sp-cmd-ref"
         style="padding:14px 16px;font-family:var(--font-serif);font-size:14px;color:#ffffff;line-height:2.2;">
         <div
