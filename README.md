@@ -27,10 +27,6 @@
 
 ### ⚰️ Git Murder Mystery
 
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
-
 <!-- LEADERBOARD:murder -->
 | Rank | Player | Time | Date |
 |------|--------|------|------|
@@ -40,10 +36,6 @@
 ---
 
 ### 🌿 Branch Quest Adventure
-
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
 
 <!-- LEADERBOARD:branch-quest -->
 | Rank | Player | Time | Date |
@@ -55,10 +47,6 @@
 
 ### 🔍 Commit History Detective
 
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
-
 <!-- LEADERBOARD:commit-detective -->
 | Rank | Player | Time | Date |
 |------|--------|------|------|
@@ -68,10 +56,6 @@
 ---
 
 ### 🚪 Repo Escape Room
-
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
 
 <!-- LEADERBOARD:escape-room -->
 | Rank | Player | Time | Date |
@@ -83,10 +67,6 @@
 
 ### ⚔️ Merge Conflict Mayhem
 
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
-
 <!-- LEADERBOARD:merge-mayhem -->
 | Rank | Player | Time | Date |
 |------|--------|------|------|
@@ -96,10 +76,6 @@
 ---
 
 ### ⏳ Git Timeline Time Travel
-
-| Rank | Player | Time | Date |
-|------|--------|------|------|
-| 🥇 | _no scores yet_ | — | — |
 
 <!-- LEADERBOARD:timeline-travel -->
 | Rank | Player | Time | Date |
