@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌿 Branch Quest Adventure</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Syne', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #060810;
+      --cyan: #00d4ff;
+      --lime: #a8ff3e;
+      --coral: #ff4f6d;
+      --txt: #8899bb;
+      --brd: #151928;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #0a0c14;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .h-t {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+
+    .hright {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timer {
+      font-size: 13px;
+      color: var(--lime);
+      letter-spacing: 2px;
+      font-weight: bold;
+      min-width: 48px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      border: 1px solid #151928;
+      padding: 4px 10px;
+      background: rgba(0, 212, 255, 0.1);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 212, 255, 0.2);
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 1;
+      border-right: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .tbar {
+      background: #0a0c14;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .tin {
+      display: flex;
+      padding: 7px 12px;
+      background: #060810;
+      border-top: 1px solid var(--brd);
+      align-items: center;
+    }
+
+    .prom {
+      color: var(--lime);
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--cyan);
+      font-family: inherit;
+      font-size: 12px;
+      caret-color: var(--cyan);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--cyan);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--lime);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .le {
+      color: var(--coral);
+    }
+
+    .lok {
+      color: var(--lime);
+      font-weight: bold;
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .lh {
+      color: #fb923c;
+    }
+
+    .lstep {
+      color: var(--cyan);
+    }
+
+    .sp {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: #0a0c14;
+      overflow: hidden;
+    }
+
+    .sp-section {
+      padding: 12px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .sp-head {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .boss-bar {
+      height: 8px;
+      background: #0a0c14;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .boss-fill {
+      height: 100%;
+      transition: width .6s ease;
+      border-radius: 2px;
+    }
+
+    #branch-graph {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .bnode {
+      padding: 3px 8px;
+      background: #0a0c14;
+      border: 1px solid var(--brd);
+      font-size: 10px;
+      color: var(--lime);
+      border-radius: 2px;
+    }
+
+    .bnode.cur {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .sp-cmd-ref {
+      padding: 10px 12px;
+      font-size: 10px;
+      color: #ffffff;
+      line-height: 1.9;
+      flex: 1;
+    }
+
+    .sp-cmd-ref span {
+      color: var(--lime);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 class="h-t">🌿 Branch Quest</h1>
+    <div class="hright">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer">00:00</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom">~/quest $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder="type a git command…" maxlength="512"></div>
+    </div>
+    <div class="sp">
+      <div class="sp-section">
+        <div class="sp-head">⚔️ Boss HP</div>
+        <div id="boss-hp-txt" style="font-size:11px;color:var(--red);"></div>
+        <div class="boss-bar">
+          <div class="boss-fill" id="boss-fill"></div>
+        </div>
+      </div>
+      <div class="sp-section" style="flex:1;overflow-y:auto;">
+        <div class="sp-head">📋 Steps</div>
+        <div id="step-list"></div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-head">🌿 Branches</div>
+        <div id="branch-graph"></div>
+      </div>
+      <div class="sp-cmd-ref">
+        <div style="color:var(--amber);margin-bottom:4px;">COMMANDS</div>
+        <div><span>git branch &lt;name&gt;</span> — create</div>
+        <div><span>git merge &lt;branch&gt;</span> — merge</div>
+        <div><span>hint</span> — get a nudge</div>
+        <div><span>clear</span> — clear terminal</div>
+      </div>
+    </div>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'branch-quest';
+
+    const PATHS = [
+      { name: 'forest-path', dmg: 25, lore: 'The enchanted forest holds the first rune.' },
+      { name: 'cave-depths', dmg: 25, lore: 'A troll guards an ancient weapon.' },
+      { name: 'sky-citadel', dmg: 30, lore: "The sky citadel contains the boss's weakness." },
+      { name: 'shadow-realm', dmg: 20, lore: 'The final shadow must be faced alone.' },
+    ];
+
+    // Boss max HP derived from the sum of all path damage values
+    const BOSS_MAX_HP = PATHS.reduce((s, p) => s + p.dmg, 0);
+
+    // Steps generated from PATHS — single source of truth
+    const STEPS = [];
+    PATHS.forEach(p => {
+      STEPS.push({
+        label: 'git branch ' + p.name,
+        prompt: 'Create the branch: git branch ' + p.name,
+        hint: 'Type exactly: git branch ' + p.name,
+        cmd_example: 'git branch ' + p.name,
+        success_msg: "Branch '" + p.name + "' created! Quest: " + p.lore,
+        check: cmd => cmd.trim() === 'git branch ' + p.name,
+      });
+      STEPS.push({
+        label: 'git merge ' + p.name,
+        prompt: 'Now merge it back: git merge ' + p.name,
+        hint: 'Type exactly: git merge ' + p.name,
+        cmd_example: 'git merge ' + p.name,
+        success_msg: "Merged '" + p.name + "'! Boss took " + p.dmg + " damage.",
+        check: cmd => cmd.trim() === 'git merge ' + p.name,
+      });
+    });
+
+    const GS = { branches: ['main'], current: 'main', bossHp: BOSS_MAX_HP, hist: [], hidx: -1 };
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+
+    function ln(cls, txt) { const s = document.createElement('span'); s.className = 'ln l' + cls; s.textContent = txt; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln'; s.textContent = ''; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    function updateBoss(hp) {
+      GS.bossHp = hp;
+      document.getElementById('boss-hp-txt').textContent = hp + ' / ' + BOSS_MAX_HP;
+      const fill = document.getElementById('boss-fill');
+      fill.style.width = (hp / BOSS_MAX_HP * 100) + '%';
+      fill.style.background = hp > BOSS_MAX_HP / 2 ? 'linear-gradient(90deg,var(--red),#ff8c42)' : hp > BOSS_MAX_HP / 4 ? 'linear-gradient(90deg,#ff8c42,var(--amber))' : 'linear-gradient(90deg,var(--amber),var(--green))';
+    }
+
+    function updateGraph() {
+      document.getElementById('branch-graph').innerHTML = GS.branches.map(b => '<div class="bnode' + (b === GS.current ? ' cur' : '') + '">' + (b === GS.current ? '* ' : '') + b + '</div>').join('');
+    }
+
+    const runner = new GitEngine.StepRunner(STEPS, {
+      onComplete: () => {
+        const secs = GitEngine.stopTimer();
+        setTimeout(() => GitEngine.showCompletionModal(GAME_ID, secs), 700);
+      }
+    });
+
+    function renderSteps() { GitEngine.renderStepProgress(document.getElementById('step-list'), STEPS, runner.current); }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      GS.hist.unshift(cmd); if (GS.hist.length > 60) GS.hist.pop(); GS.hidx = -1;
+      ln('c', cmd); blk();
+      if (cmd === 'clear') { out.innerHTML = ''; return; }
+      if (cmd === 'git branch' || cmd === 'git branch --list') { GS.branches.forEach(b => ln('o', (b === GS.current ? '* ' : '  ') + b)); blk(); scrl(); return; }
+      if (cmd === 'git status') { ln('o', 'On branch ' + GS.current + '\nnothing to commit, working tree clean'); blk(); scrl(); return; }
+      if (cmd === 'git log') { ln('lm', '(step history — type hint for next step)'); blk(); scrl(); return; }
+      const result = runner.process(cmd);
+      if (result.type === 'advance' || result.type === 'complete') {
+        ln('lok', result.msg);
+        const stepIdx = runner.current - 1;
+        const pathIdx = Math.floor(stepIdx / 2);
+        const isCreate = stepIdx % 2 === 0;
+        const p = PATHS[pathIdx];
+        if (p) {
+          if (isCreate) { GS.branches.push(p.name); updateGraph(); }
+          else { updateBoss(Math.max(0, GS.bossHp - p.dmg)); GS.branches = GS.branches.filter(b => b !== p.name); updateGraph(); ln('lh', '💥 Boss HP: ' + GS.bossHp + '/' + BOSS_MAX_HP); }
+        }
+        if (result.final) { ln('lok', '⚔️  THE BOSS HAS FALLEN! All paths merged to glory!'); }
+        else { blk(); ln('lstep', '▶ NEXT: ' + result.nextPrompt); }
+        renderSteps();
+      } else if (result.type === 'wrong') { ln('le', result.msg); ln('lm', '💡 ' + result.hint); }
+      else if (result.type === 'hint') { ln('lm', '💡 ' + result.msg); }
+      else if (result.type === 'help') { ln('lo', 'Commands: git branch <n>, git merge <n>, hint, clear'); }
+      else { ln('le', "Unknown command. Type 'hint' for help."); }
+      blk(); scrl();
+    }
+
+    GitEngine.startTimer(document.getElementById('timer'));
+
+    // Overlay tips are generated from PATHS array — no hardcoded path names
+    const pathOrder = PATHS.map(p => p.name).join(' → ');
+    GitOverlay.init({
+      gameId: 'branch-quest', title: '🌿 Branch Quest Adventure', tagline: 'RPG boss fight powered by Git branching',
+      objective: 'Create ' + PATHS.length + ' named branches and merge each back into main to deal damage to the dungeon boss. Drain the boss HP from ' + BOSS_MAX_HP + ' to 0.',
+      howToPlay: ['Type <code>git branch &lt;path-name&gt;</code> to create each quest path.', 'Immediately after creating a branch, type <code>git merge &lt;path-name&gt;</code> to deal damage.', 'Each of the ' + PATHS.length + ' paths must be created and merged in the order shown in the Steps panel.', 'Wrong command? You will get an error and hint — the step does not advance.', 'Complete all ' + STEPS.length + ' steps (' + PATHS.length + ' create + ' + PATHS.length + ' merge) to slay the boss and stop the clock.'],
+      commands: [{ cmd: 'git branch &lt;name&gt;', desc: 'Create a new branch named &lt;name&gt;' }, { cmd: 'git merge &lt;name&gt;', desc: 'Merge &lt;name&gt; into current branch, dealing boss damage' }, { cmd: 'git branch', desc: 'List all existing branches' }, { cmd: 'hint', desc: 'Show the exact command needed for the current step' }],
+      tips: ['Use ↑/↓ arrow keys to cycle through your command history.', 'Branches must be done in order: ' + pathOrder + '.', 'You must create a branch before you can merge it — no skipping.', 'Type <code>hint</code> at any point if you are stuck.', 'Boss HP colour changes from red → orange → green as it drops.'],
+      scoring: 'The timer starts when the page loads. It stops automatically the moment the final merge is accepted. Your total elapsed time (MM:SS) is your score — lower is better.',
+    });
+
+    renderSteps(); updateGraph(); updateBoss(BOSS_MAX_HP);
+    ln('o', '╔══════════════════════════════════════╗');
+    ln('o', '║    🌿 BRANCH QUEST ADVENTURE          ║');
+    ln('o', '╚══════════════════════════════════════╝');
+    blk();
+    ln('o', 'The dungeon boss has ' + BOSS_MAX_HP + ' HP. Each path branch you');
+    ln('o', 'create and merge deals damage. Drain it to zero.');
+    blk();
+    ln('lstep', '▶ START: ' + STEPS[0].prompt);
+    blk();
+    ln('lm', "Type  hint  at any time for a nudge.");
+    blk();
+
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      // ArrowUp/Down cycle through history (fixed — was only showing hist[0])
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (GS.hidx < GS.hist.length - 1) { GS.hidx++; ci.value = GS.hist[GS.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (GS.hidx > 0) { GS.hidx--; ci.value = GS.hist[GS.hidx] || ''; } else { GS.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>

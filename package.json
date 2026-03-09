@@ -1,0 +1,23 @@
+{
+  "name": "git-games-hub",
+  "version": "1.0.0",
+  "description": "Six browser-based interactive Git learning games",
+  "private": true,
+  "scripts": {
+    "lint": "eslint engine.js overlay.js",
+    "validate": "node .github/scripts/validate-readme.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "globals": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Abhisheksinha1506/git-games-hub.git"
+  },
+  "homepage": "https://Abhisheksinha1506.github.io/git-games-hub/",
+  "license": "MIT"
+}

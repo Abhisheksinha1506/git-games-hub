@@ -1,0 +1,102 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# deploy.yml
+#
+# Auto-deploys Git Games Hub to GitHub Pages whenever a push lands on `main`.
+#
+# What it does:
+#   1. Checks out the repo
+#   2. Optionally lints JS (ESLint) — catches syntax errors before they go live
+#   3. Deploys the whole repo root to the `gh-pages` branch
+#
+# Requirements:
+#   - Repo Settings → Pages → Source: Deploy from branch → gh-pages → / (root)
+#   - OR switch to "GitHub Actions" source and remove the gh-pages deploy step —
+#     just upload the artifact directly (see commented alternative below).
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 🚀 Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push to gh-pages branch
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # ── Job 1: Lint ─────────────────────────────────────────────────────────────
+  lint:
+    name: 🔍 Lint JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ESLint
+        run: npm install --save-dev eslint@8 globals
+
+      - name: Write ESLint config
+        run: |
+          cat > eslint.config.mjs << 'EOF'
+          import globals from "globals";
+          export default [
+            {
+              files: ["**/*.js"],
+              languageOptions: {
+                globals: { ...globals.browser }
+              },
+              rules: {
+                "no-undef": "warn",
+                "no-unused-vars": "warn",
+                "no-eval": "error"
+              }
+            }
+          ];
+          EOF
+
+      - name: Run ESLint on engine.js and overlay.js
+        run: npx eslint engine.js overlay.js --max-warnings 20
+        continue-on-error: true   # warn but don't block deploy for style issues
+
+  # ── Job 2: Deploy ───────────────────────────────────────────────────────────
+  deploy:
+    name: 📦 Deploy to gh-pages
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./          # deploy entire repo root
+          publish_branch: gh-pages
+          commit_message: "deploy: ${{ github.event.head_commit.message }}"
+          # Exclude dev/config files from the published site
+          exclude_assets: |
+            .github
+            .gitignore
+            eslint.config.mjs
+            package*.json
+            node_modules
+
+      - name: Print live URL
+        run: |
+          OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          echo "🌐 Live at: https://${OWNER}.github.io/${REPO}/"

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎮 Git Games Hub</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Syne', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #060810;
+      --cyan: #00d4ff;
+      --lime: #a8ff3e;
+      --coral: #ff4f6d;
+      --txt: #8899bb;
+      --brd: #151928;
+      --card: #0a0c14;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 60px;
+    }
+
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #040608 0%, #060810 60%, #040608 100%);
+      border-bottom: 1px solid #151928;
+      padding: 22px 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 212, 255, 0.03) 2px, rgba(0, 212, 255, 0.03) 4px);
+      pointer-events: none;
+    }
+
+    .hub-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 32px;
+      color: var(--cyan);
+      letter-spacing: 4px;
+      text-shadow: 0 0 40px rgba(0, 212, 255, .45);
+    }
+
+    .hub-sub {
+      font-size: 11px;
+      color: #ffffff;
+      letter-spacing: 3px;
+      margin-top: 7px;
+    }
+
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 20px;
+      max-width: 1080px;
+      width: 100%;
+      padding: 40px 24px 0;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+      transition: border-color .25s, transform .2s;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+    }
+
+    .game-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.15);
+    }
+
+    .card-header {
+      padding: 20px 20px 14px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .card-emoji {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+
+    .card-tag {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .card-body {
+      padding: 14px 20px;
+      flex: 1;
+    }
+
+    .card-desc {
+      font-size: 11.5px;
+      line-height: 1.75;
+      color: #ffffff;
+    }
+
+    .card-footer {
+      padding: 10px 20px;
+      border-top: 1px solid var(--brd);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-cmds {
+      font-size: 9px;
+      color: #ffffff;
+    }
+
+    .card-cmds span {
+      color: var(--lime);
+    }
+
+    .card-play {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+    }
+
+    .footer-bar {
+      margin-top: 48px;
+      font-size: 12px;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-align: center;
+      line-height: 2;
+    }
+
+    .footer-bar a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    .footer-bar a:hover {
+      text-decoration: underline;
+    }
+
+    .difficulty {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .diff-easy {
+      border: 1px solid var(--lime);
+      color: var(--lime);
+    }
+
+    .diff-medium {
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+    }
+
+    .diff-hard {
+      border: 1px solid var(--coral);
+      color: var(--coral);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="hub-title">🎮 GIT GAMES HUB</div>
+    <div class="hub-sub">Learn git the fun way — six interactive challenges</div>
+  </header>
+  <div class="hub-grid" id="grid"></div>
+  <div class="footer-bar">
+    Built with ♥ · Pure HTML/JS · No install needed<br>
+    <a href="https://github.com" target="_blank">View on GitHub</a> · Submit your scores via PR
+  </div>
+  <script>
+    const GAMES = [
+      {
+        file: 'murder.html',
+        emoji: '⚰',
+        title: 'Git Murder Mystery',
+        tag: 'Investigation · Open world',
+        difficulty: 'hard',
+        desc: 'A body has been found at 14 Harvey Street, Git Town, 1991. Clone the GTPD police archive, navigate witness testimonies hidden across branches and tags, and name the killer.',
+        cmds: ['git clone', 'git log', 'git show', 'git tag'],
+      },
+      {
+        file: 'branch-quest.html',
+        emoji: '🌿',
+        title: 'Branch Quest',
+        tag: 'RPG · Timed',
+        difficulty: 'easy',
+        desc: 'A dungeon boss has 100 HP. Create and merge 4 quest branches to deal damage. Drain the boss to zero before time runs out.',
+        cmds: ['git branch', 'git merge'],
+      },
+      {
+        file: 'commit-detective.html',
+        emoji: '🔍',
+        title: 'Commit Detective',
+        tag: 'Mystery · Timed',
+        difficulty: 'easy',
+        desc: 'Someone disabled the rate limiter. Use git forensics to identify the culprit, inspect their bad commit, and revert it to close the case.',
+        cmds: ['git log', 'git blame', 'git show', 'git revert'],
+      },
+      {
+        file: 'escape-room.html',
+        emoji: '🚪',
+        title: 'Repo Escape Room',
+        tag: 'Puzzle · Timed',
+        difficulty: 'medium',
+        desc: 'Locked inside a repository with 4 rooms. Each room file hides a keyword. Use git grep to find each keyword and unlock every room to escape.',
+        cmds: ['git ls-files', 'git grep', 'git show'],
+      },
+      {
+        file: 'merge-mayhem.html',
+        emoji: '⚔️',
+        title: 'Merge Conflict Mayhem',
+        tag: 'Action · 3 waves',
+        difficulty: 'medium',
+        desc: 'Survive 3 escalating waves of merge conflicts. Trigger each wave with the right merge command, then resolve each conflict by choosing which code to keep.',
+        cmds: ['git merge'],
+      },
+      {
+        file: 'timeline-travel.html',
+        emoji: '⏳',
+        title: 'Timeline Time Travel',
+        tag: 'Debug · Timed',
+        difficulty: 'medium',
+        desc: 'A bug crept into the commit history. Use git reset to travel back in time, then git bisect to pinpoint the exact first bad commit.',
+        cmds: ['git log', 'git reset', 'git bisect'],
+      },
+    ];
+
+    const diffLabel = { easy: 'EASY', medium: 'MEDIUM', hard: 'HARD' };
+    const grid = document.getElementById('grid');
+    grid.innerHTML = GAMES.map(g => `
+  <a class="game-card" href="${g.file}" aria-label="Play ${g.title}: ${g.tag}">
+    <div class="card-header">
+      <div class="card-emoji" role="img" aria-label="Game icon">${g.emoji}</div>
+      <div class="card-title">${g.title}</div>
+      <div class="card-tag">${g.tag} &nbsp;·&nbsp; <span class="difficulty diff-${g.difficulty}" aria-label="Difficulty: ${diffLabel[g.difficulty]}">${diffLabel[g.difficulty]}</span></div>
+    </div>
+    <div class="card-body">
+      <div class="card-desc">${g.desc}</div>
+    </div>
+    <div class="card-footer">
+      <div class="card-cmds" aria-label="Required commands">${g.cmds.map(c => '<span>' + c + '</span>').join(' · ')}</div>
+      <div class="card-play" aria-hidden="true">PLAY →</div>
+    </div>
+  </a>
+`).join('');
+  </script>
+</body>
+
+</html>

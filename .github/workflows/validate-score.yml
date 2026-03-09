@@ -1,0 +1,95 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# validate-score.yml
+#
+# Runs on every Pull Request that targets `main`.
+#
+# For score-entry/* branches it:
+#   1. Validates the score row format in README.md
+#   2. Checks the time is a valid MM:SS string
+#   3. Checks the date is today (within 7 days — allows for slow PR review)
+#   4. Auto-sorts the leaderboard table by time (fastest first)
+#   5. Adds a ✅ status check so maintainers can merge with confidence
+#
+# For regular PRs (bug fixes, new games) it:
+#   1. Checks no leaderboard data was accidentally deleted
+#   2. Lints HTML structure of any changed game files
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: ✅ Validate Score PR
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write      # to push sorted leaderboard back to the PR branch
+  pull-requests: write # to post a comment on the PR
+
+jobs:
+  validate:
+    name: 🏆 Validate & Sort Leaderboard
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run validation + sort script
+        id: validate
+        run: node .github/scripts/validate-readme.js README.md
+
+      - name: Commit sorted leaderboard (if changed)
+        if: always()
+        run: |
+          if [ -f /tmp/lb_changed.txt ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "ci: sort leaderboard [skip ci]"
+            git push
+            echo "Leaderboard sorted and pushed."
+          else
+            echo "No changes to commit."
+          fi
+
+      - name: Post success comment
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const hasWarnings = fs.existsSync('/tmp/pr_warnings.txt');
+            const warnings = hasWarnings
+              ? '\n\n**Warnings:**\n' + fs.readFileSync('/tmp/pr_warnings.txt','utf8')
+              : '';
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ✅ Score Validated!\n\nYour score row passed all checks. The leaderboard has been sorted by time.\n\nA maintainer will merge this PR shortly. 🎉${warnings}`
+            });
+
+      - name: Post failure comment
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const errors = fs.existsSync('/tmp/pr_errors.txt')
+              ? fs.readFileSync('/tmp/pr_errors.txt','utf8')
+              : 'Unknown validation error.';
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ Score Validation Failed\n\nPlease fix the following errors and push again:\n\n\`\`\`\n${errors}\n\`\`\`\n\n**Correct format:**\n\`| 🏅 | @your-username | MM:SS | YYYY-MM-DD |\`\n\nNeed help? See the [submission guide](../../blob/${context.payload.repository.default_branch}/README.md#-submitting-your-score).`
+            });

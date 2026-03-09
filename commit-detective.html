@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔍 Commit History Detective</title>
+  <style>
+    /* Fonts loaded from Google Fonts CDN with system-font fallbacks for offline/restricted environments */
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700&display=swap');
+  </style>
+  <style>
+    /* If CDN unavailable, these stacks activate automatically */
+    :root {
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+      --font-serif: 'Syne', 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+  </style>
+  <style>
+    :root {
+      --bg: #060810;
+      --cyan: #00d4ff;
+      --lime: #a8ff3e;
+      --coral: #ff4f6d;
+      --txt: #8899bb;
+      --brd: #151928;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background: #0a0c14;
+      padding: 9px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--brd);
+      flex-shrink: 0;
+    }
+
+    .h-t {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+
+    .hright {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #timer {
+      font-size: 13px;
+      color: var(--lime);
+      letter-spacing: 2px;
+      font-weight: bold;
+      min-width: 48px;
+    }
+
+    .back-btn {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--cyan);
+      border: 1px solid #151928;
+      padding: 4px 10px;
+      background: rgba(0, 212, 255, 0.1);
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tw {
+      flex: 1;
+      border-right: 1px solid var(--brd);
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .tbar {
+      background: #0a0c14;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dr {
+      background: #ff5f57;
+    }
+
+    .dy {
+      background: #ffbd2e;
+    }
+
+    .dg {
+      background: #28c840;
+    }
+
+    #out {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    #out::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #out::-webkit-scrollbar-thumb {
+      background: var(--brd);
+    }
+
+    .tin {
+      display: flex;
+      padding: 7px 12px;
+      background: #0e1015;
+      border-top: 1px solid var(--brd);
+      align-items: center;
+    }
+
+    .prom {
+      color: var(--green);
+      margin-right: 6px;
+    }
+
+    #ci {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--amber);
+      font-family: inherit;
+      font-size: 12px;
+      caret-color: var(--amber);
+    }
+
+    .ln {
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .lc {
+      color: var(--amber);
+    }
+
+    .lc::before {
+      content: '$ ';
+      color: var(--green);
+    }
+
+    .lo {
+      color: var(--txt);
+    }
+
+    .le {
+      color: var(--red);
+    }
+
+    .lok {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .lm {
+      color: #ffffff;
+    }
+
+    .lh {
+      color: #fb923c;
+    }
+
+    .lstep {
+      color: var(--cyan);
+    }
+
+    .sp {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: #0d0f14;
+      overflow: hidden;
+    }
+
+    .sp-section {
+      padding: 12px;
+      border-bottom: 1px solid var(--brd);
+    }
+
+    .sp-head {
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .clue {
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--brd);
+      font-size: 10px;
+      color: var(--txt);
+    }
+
+    .clue::before {
+      content: '🔍 ';
+    }
+
+    .suspect-btn {
+      display: block;
+      width: 100%;
+      padding: 6px 10px;
+      background: transparent;
+      border: 1px solid var(--brd);
+      color: var(--txt);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      text-align: left;
+      transition: all .2s;
+    }
+
+    .suspect-btn:hover {
+      border-color: var(--amber);
+    }
+
+    .suspect-btn.guilty {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .suspect-btn.cleared {
+      opacity: .4;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 class="h-t">🔍 Commit Detective</h1>
+    <div class="hright">
+      <a class="back-btn" href="index.html">← HUB</a>
+      <span id="timer">00:00</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="tw">
+      <div class="tbar">
+        <div class="dot dr"></div>
+        <div class="dot dy"></div>
+        <div class="dot dg"></div>
+      </div>
+      <div id="out"></div>
+      <div class="tin"><span class="prom">~/repo $</span><input id="ci" type="text" autocomplete="off"
+          spellcheck="false" placeholder="type a git command…" maxlength="512"></div>
+    </div>
+    <div class="sp">
+      <div class="sp-section" style="flex:1;overflow-y:auto;">
+        <div class="sp-head">📋 Steps</div>
+        <div id="step-list"></div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-head">🔍 Clues</div>
+        <div id="clues">
+          <div style="font-size:10px;color:#ffffff;font-style:italic;">None yet.</div>
+        </div>
+      </div>
+      <div class="sp-section">
+        <div class="sp-head">👥 Suspects</div>
+        <div id="suspects"></div>
+      </div>
+      <div style="padding:10px 12px;font-size:10px;color:#ffffff;line-height:1.9;">
+        <div style="color:var(--amber);margin-bottom:4px;">COMMANDS</div>
+        <div>git log</div>
+        <div>git log --author=Name</div>
+        <div>git blame main.py</div>
+        <div>git show &lt;hash&gt;</div>
+        <div>git revert &lt;hash&gt;</div>
+        <div>clear</div>
+      </div>
+    </div>
+  </div>
+  <script src="engine.js"></script>
+  <script src="overlay.js"></script>
+  <script>
+    const GAME_ID = 'commit-detective';
+
+    // Single source of truth for commit data
+    const COMMITS = [
+      { h: 'ghi789', a: 'Charlie', d: '2023-01-03', m: 'Refactor: improve render loop performance', clean: true },
+      { h: 'def456', a: 'Bob', d: '2023-01-02', m: 'Update config — disable rate limiter', clean: false },
+      { h: 'abc123', a: 'Alice', d: '2023-01-01', m: 'Initial commit: add authentication module', clean: true },
+    ];
+
+    // Derived from COMMITS — no separate hardcoded values
+    const CULPRIT = COMMITS.find(c => !c.clean);
+    const CULPRIT_HASH = CULPRIT.h;
+    const CULPRIT_AUTHOR = CULPRIT.a;
+    // Suspects derived from COMMITS authors (deduped, stable order)
+    const SUSPECTS = [...new Set(COMMITS.map(c => c.a))];
+
+    // Steps reference CULPRIT_HASH and CULPRIT_AUTHOR — never hardcoded elsewhere
+    const STEPS = [
+      {
+        label: 'git log', prompt: 'Run git log to see all commits', hint: 'Type: git log', cmd_example: 'git log',
+        success_msg: 'Commit history found. Something looks suspicious...',
+        check: cmd => cmd.trim() === 'git log'
+      },
+      {
+        label: 'git log --author=' + CULPRIT_AUTHOR,
+        prompt: 'Filter by the suspicious author: git log --author=' + CULPRIT_AUTHOR,
+        hint: 'Type: git log --author=' + CULPRIT_AUTHOR, cmd_example: 'git log --author=' + CULPRIT_AUTHOR,
+        success_msg: `${CULPRIT_AUTHOR}'s commit narrows it down. Inspect the hash!`,
+        check: cmd => new RegExp('git log.*--author=["\']?' + CULPRIT_AUTHOR + '["\']?', 'i').test(cmd)
+      },
+      {
+        label: 'git blame main.py', prompt: 'Check who touched each line: git blame main.py',
+        hint: 'Type: git blame main.py', cmd_example: 'git blame main.py',
+        success_msg: `Blame output confirms: ${CULPRIT_AUTHOR} disabled the rate limiter on line 3.`,
+        check: cmd => /git blame\s+main\.py/.test(cmd)
+      },
+      {
+        label: 'git show ' + CULPRIT_HASH,
+        prompt: 'Inspect the bad commit: git show ' + CULPRIT_HASH,
+        hint: 'Type: git show ' + CULPRIT_HASH, cmd_example: 'git show ' + CULPRIT_HASH,
+        success_msg: `Confirmed: ${CULPRIT_HASH} disabled RATE_LIMIT_ENABLED. Time to revert!`,
+        check: cmd => new RegExp('git show\\s+' + CULPRIT_HASH).test(cmd)
+      },
+      {
+        label: 'git revert ' + CULPRIT_HASH,
+        prompt: 'Undo the damage: git revert ' + CULPRIT_HASH,
+        hint: 'Type: git revert ' + CULPRIT_HASH, cmd_example: 'git revert ' + CULPRIT_HASH,
+        success_msg: 'Case closed! The bad commit has been reverted.',
+        check: cmd => new RegExp('git revert\\s+' + CULPRIT_HASH).test(cmd)
+      },
+    ];
+
+    const out = document.getElementById('out'), ci = document.getElementById('ci');
+    let clues = [];
+    const GS = { hist: [], hidx: -1 };
+
+    function ln(cls, txt) { const s = document.createElement('span'); s.className = 'ln l' + cls; s.textContent = txt; out.appendChild(s); }
+    function blk() { const s = document.createElement('span'); s.className = 'ln'; s.textContent = ''; out.appendChild(s); }
+    function scrl() { out.scrollTop = out.scrollHeight; }
+
+    function addClue(c) {
+      if (clues.includes(c)) return; clues.push(c);
+      const el = document.getElementById('clues'); el.innerHTML = '';
+      clues.forEach(cl => { const d = document.createElement('div'); d.className = 'clue'; d.textContent = cl; el.appendChild(d); });
+    }
+
+    function renderSuspects() {
+      const div = document.getElementById('suspects');
+      // Suspects derived from COMMITS authors — no separate hardcoded list
+      div.innerHTML = SUSPECTS.map(n => {
+        const id = 'susp-' + n.toLowerCase().replace(/\s+/g, '-');
+        return `<button class="suspect-btn" id="${id}" data-name="${n}">${n}</button>`;
+      }).join('');
+      div.querySelectorAll('.suspect-btn').forEach(btn => {
+        btn.addEventListener('click', () => accuseSuspect(btn.dataset.name));
+      });
+    }
+
+    function accuseSuspect(name) {
+      // Derive guilt from COMMITS data — not hardcoded
+      const isGuilty = name === CULPRIT_AUTHOR;
+      if (isGuilty) {
+        addClue(`${name} is the culprit — commit ${CULPRIT_HASH}`);
+        ln('lok', `Correct! ${name} is guilty. Now revert their commit.`);
+        document.getElementById('susp-' + name.toLowerCase().replace(/\s+/g, '-')).classList.add('guilty');
+      } else {
+        ln('le', name + ' is innocent. Keep investigating.');
+        document.getElementById('susp-' + name.toLowerCase().replace(/\s+/g, '-')).classList.add('cleared');
+      }
+      blk(); scrl();
+    }
+
+    const runner = new GitEngine.StepRunner(STEPS, {
+      onComplete: () => {
+        const secs = GitEngine.stopTimer();
+        setTimeout(() => GitEngine.showCompletionModal(GAME_ID, secs), 700);
+      }
+    });
+    function renderSteps() { GitEngine.renderStepProgress(document.getElementById('step-list'), STEPS, runner.current); }
+
+    function run(raw) {
+      const cmd = raw.trim(); if (!cmd) return;
+      GS.hist.unshift(cmd); if (GS.hist.length > 60) GS.hist.pop(); GS.hidx = -1;
+      ln('c', cmd); blk();
+      if (cmd === 'clear') { out.innerHTML = ''; return; }
+      // Rich output for informational commands regardless of step gating
+      if (cmd === 'git log' || /git log.*--author/i.test(cmd)) {
+        // Support quoted names: --author="Bob" or --author='Bob' or --author=Bob
+        const authorMQ = cmd.match(/--author=["'](.*?)["']/i); const authorMU = cmd.match(/--author=([\w][\w.-]*)/i);
+        const rawAuthor = authorMQ ? authorMQ[1] : (authorMU ? authorMU[1] : null);
+        const filter = rawAuthor ? rawAuthor.toLowerCase() : null;
+        COMMITS.filter(c => !filter || c.a.toLowerCase() === filter).forEach(c => {
+          ln('lh', 'commit ' + c.h); ln('o', 'Author: ' + c.a + ' <' + c.a.toLowerCase() + '@gitcorp.io>'); ln('o', 'Date:   ' + c.d); blk(); ln('o', '    ' + c.m); blk();
+          if (!c.clean) addClue('Suspicious commit ' + c.h + ' by ' + c.a);
+        });
+      }
+      else if (/git blame/.test(cmd) && cmd.includes('main.py')) {
+        // Blame output generated from COMMITS data — single source of truth
+        COMMITS.forEach((c, i) => {
+          const lineNo = i + 1;
+          const isBad = !c.clean;
+          // Simulate blame line per commit
+          if (i === 0) { ln('o', `${c.h.slice(0, 6)} (${c.a.padEnd(7)} ${c.d}  ${lineNo}) import auth`); }
+          if (i === 0) { ln('o', `${c.h.slice(0, 6)} (${c.a.padEnd(7)} ${c.d}  2) from modules import rate_limiter`); }
+          if (i === 1) { ln(isBad ? 'lh' : 'o', `${c.h.slice(0, 6)} (${c.a.padEnd(7)} ${c.d}  3) # rate_limiter disabled`); }
+          if (i === 2) { ln('o', `${c.h.slice(0, 6)} (${c.a.padEnd(7)} ${c.d}  4) def render():`); }
+          if (i === 2) { ln('o', `${c.h.slice(0, 6)} (${c.a.padEnd(7)} ${c.d}  5)     pass`); }
+        });
+        addClue(`git blame: ${CULPRIT_AUTHOR} (${CULPRIT_HASH}) disabled rate_limiter line 3`); blk();
+      }
+      else if (new RegExp('git show\\s+' + CULPRIT_HASH).test(cmd)) {
+        // Show output generated from COMMITS data
+        const c = CULPRIT;
+        ln('lh', 'commit ' + c.h); ln('o', 'Author: ' + c.a + ' <' + c.a.toLowerCase() + '@gitcorp.io>'); ln('o', 'Date:   ' + c.d); blk();
+        ln('o', '    ' + c.m); blk();
+        ln('o', '-RATE_LIMIT_ENABLED = True'); ln('lok', '+RATE_LIMIT_ENABLED = False');
+        addClue('git show ' + c.h + ': rate limiter disabled by ' + c.a); blk();
+      }
+      else if (new RegExp('git revert\\s+' + CULPRIT_HASH).test(cmd)) {
+        ln('lok', '[main d8f3a21] Revert "' + CULPRIT.m + '"');
+        ln('lok', '1 file changed, 1 insertion(+), 1 deletion(-)'); blk();
+      }
+      const result = runner.process(cmd);
+      if (result.type === 'advance' || result.type === 'complete') {
+        ln('lok', '✓ ' + result.msg);
+        if (!result.final) { blk(); ln('lstep', '▶ NEXT: ' + result.nextPrompt); }
+        else { ln('lok', '🎉 CASE CLOSED. Justice served!'); }
+        renderSteps();
+      } else if (result.type === 'wrong') { ln('le', result.msg); ln('lm', '💡 ' + result.hint); }
+      else if (result.type === 'hint') { ln('lm', '💡 ' + result.msg); }
+      else if (result.type === 'help') { ln('lo', 'Commands: git log, git log --author=X, git blame main.py, git show <hash>, git revert <hash>, clear'); }
+      blk(); scrl();
+    }
+
+    GitEngine.startTimer(document.getElementById('timer'));
+    GitOverlay.init({
+      gameId: 'commit-detective', title: '🔍 Commit History Detective', tagline: 'Track down the saboteur through git history',
+      objective: 'Someone broke the codebase by disabling the rate limiter. Use git forensics to identify the culprit, inspect their commit, and revert it to restore order.',
+      howToPlay: ['Start with <code>git log</code> to see the full commit history.', 'Filter commits by the suspicious author using <code>git log --author=Name</code>.', 'Run <code>git blame main.py</code> to see who changed each line of the file.', 'Inspect the bad commit directly with <code>git show &lt;hash&gt;</code>.', 'Finally, undo the damage with <code>git revert &lt;hash&gt;</code> to close the case.'],
+      commands: [{ cmd: 'git log', desc: 'Show full commit history with hashes, authors, dates' }, { cmd: 'git log --author=Name', desc: 'Filter history to only show commits by a specific author' }, { cmd: 'git blame main.py', desc: 'Show which commit last modified each line of the file' }, { cmd: 'git show &lt;hash&gt;', desc: 'Inspect the diff and metadata of a specific commit' }, { cmd: 'git revert &lt;hash&gt;', desc: 'Create a new commit that undoes the changes of &lt;hash&gt;' }],
+      tips: ['<code>git log --author=' + CULPRIT_AUTHOR + '</code> works with or without quotes around the name.', 'The bad commit hash is 6 characters: <strong>' + CULPRIT_HASH + '</strong> — visible in git log output.', 'git blame shows the hash at the start of each line — look for the suspicious one.', 'git revert does not delete history — it adds a new "undo" commit safely.', 'Click the suspect cards in the sidebar to narrow down who did it.'],
+      scoring: 'Timer starts on page load and stops when git revert ' + CULPRIT_HASH + ' is accepted. All 5 steps must be completed in order.',
+    });
+
+    renderSteps(); renderSuspects();
+    ln('o', '╔══════════════════════════════════════╗');
+    ln('o', '║   🔍 COMMIT HISTORY DETECTIVE         ║');
+    ln('o', '╚══════════════════════════════════════╝');
+    blk();
+    ln('o', 'Someone sabotaged the codebase. Use git to');
+    ln('o', 'identify the culprit, inspect their commit,');
+    ln('o', 'and revert it to close the case.');
+    blk();
+    ln('lstep', '▶ START: ' + STEPS[0].prompt);
+    blk();
+    ln('lm', "Type  hint  at any time for a nudge.");
+    blk();
+    ci.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { run(ci.value); ci.value = ''; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); if (GS.hidx < GS.hist.length - 1) { GS.hidx++; ci.value = GS.hist[GS.hidx] || ''; } }
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (GS.hidx > 0) { GS.hidx--; ci.value = GS.hist[GS.hidx] || ''; } else { GS.hidx = -1; ci.value = ''; } }
+    });
+    ci.focus();
+  </script>
+</body>
+
+</html>
