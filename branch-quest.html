@@ -344,16 +344,16 @@
     const STEPS = [];
     PATHS.forEach(p => {
       STEPS.push({
-        label: 'git branch ' + p.name,
-        prompt: 'Create the branch: git branch ' + p.name,
+        label: 'Create branch: ' + p.name,
+        prompt: 'Create the branch named ' + p.name,
         hint: 'Type exactly: git branch ' + p.name,
         cmd_example: 'git branch ' + p.name,
         success_msg: "Branch '" + p.name + "' created! Quest: " + p.lore,
         check: cmd => cmd.trim() === 'git branch ' + p.name,
       });
       STEPS.push({
-        label: 'git merge ' + p.name,
-        prompt: 'Now merge it back: git merge ' + p.name,
+        label: 'Merge branch: ' + p.name,
+        prompt: 'Now merge ' + p.name + ' into the current branch',
         hint: 'Type exactly: git merge ' + p.name,
         cmd_example: 'git merge ' + p.name,
         success_msg: "Merged '" + p.name + "'! Boss took " + p.dmg + " damage.",
