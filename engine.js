@@ -327,6 +327,7 @@ window.GitEngine = (function () {
 
           <div class="ge-btns">
             <button class="ge-btn" id="ge-pr-btn">🚀 SUBMIT SCORE ↗</button>
+            <button class="ge-btn sec" id="ge-copy-btn">📋 COPY SCORE</button>
             <button class="ge-btn sec" id="ge-hub-btn">🏠 EXIT TO HUB</button>
             <button class="ge-btn sec" id="ge-close-btn">✕ CLOSE</button>
           </div>
