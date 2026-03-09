@@ -406,34 +406,34 @@
         check: cmd => cmd.trim() === 'git log'
       },
       {
-        label: 'git reset --hard HEAD~' + RESET_DEPTH,
-        prompt: 'Travel back ' + RESET_DEPTH + ' commits: git reset --hard HEAD~' + RESET_DEPTH,
-        hint: 'Type: git reset --hard HEAD~' + RESET_DEPTH,
-        cmd_example: 'git reset --hard HEAD~' + RESET_DEPTH,
-        success_msg: 'Traveled back ' + RESET_DEPTH + ' commits. You are now before the bug!',
-        check: cmd => new RegExp('git reset --hard HEAD~' + RESET_DEPTH).test(cmd)
+        label: 'Travel back',
+        prompt: 'Travel back in time to reaching the stable state before the corruption.',
+        hint: 'Use git reset --hard with a commit hash or relative reference (HEAD~N).',
+        cmd_example: 'git reset --hard <hash>',
+        check: cmd => new RegExp('git reset --hard HEAD~' + RESET_DEPTH).test(cmd),
+        success_msg: 'Traveled back ' + RESET_DEPTH + ' commits. You are now before the bug!'
       },
       {
         label: 'git bisect start',
-        prompt: 'Start bisecting: git bisect start',
-        hint: 'Type: git bisect start', cmd_example: 'git bisect start',
-        success_msg: 'Bisect started. Mark current state as bad.',
+        prompt: 'Start bisecting the timeline to find the exact moment of corruption.',
+        hint: 'Use the git bisect start command.', cmd_example: 'git bisect start',
+        success_msg: 'Bisect started. Mark the current state as bad.',
         check: cmd => cmd.trim() === 'git bisect start'
       },
       {
         label: 'git bisect bad',
-        prompt: 'Mark current HEAD as bad: git bisect bad',
-        hint: 'Type: git bisect bad', cmd_example: 'git bisect bad',
+        prompt: 'Mark the current HEAD as bad (corrupted).',
+        hint: 'Use git bisect bad.', cmd_example: 'git bisect bad',
         success_msg: 'Marked as bad. Now mark the known good commit.',
         check: cmd => cmd.trim() === 'git bisect bad'
       },
       {
-        label: 'git bisect good ' + GOOD_HASH,
-        prompt: 'Mark the oldest commit as good: git bisect good ' + GOOD_HASH,
-        hint: 'Type: git bisect good ' + GOOD_HASH,
-        cmd_example: 'git bisect good ' + GOOD_HASH,
-        success_msg: 'Bisect complete! First bad commit: ' + BAD_HASH + ' — ' + BAD_COMMIT.msg,
-        check: cmd => new RegExp('git bisect good ' + GOOD_HASH).test(cmd)
+        label: 'Mark good commit',
+        prompt: 'Mark the oldest known stable commit as good.',
+        hint: 'Use git bisect good with the hash of the oldest commit.',
+        cmd_example: 'git bisect good <hash>',
+        check: cmd => new RegExp('git bisect good ' + GOOD_HASH).test(cmd),
+        success_msg: 'Bisect complete! First bad commit found: ' + BAD_HASH + ' — ' + BAD_COMMIT.msg
       },
     ];
 
@@ -554,9 +554,9 @@
     GitOverlay.init({
       gameId: 'timeline-travel', title: '⏳ Git Timeline Time Travel', tagline: 'Debug the past with git reset and bisect',
       objective: 'A bug was introduced somewhere in the last ' + COMMITS.length + ' commits. Inspect the log, travel back in time with git reset, then use git bisect to pinpoint the exact bad commit.',
-      howToPlay: ['Run <code>git log</code> to inspect the commit history and identify suspicious commits.', 'Travel back ' + RESET_DEPTH + ' commits: <code>git reset --hard HEAD~' + RESET_DEPTH + '</code>.', 'Start the bisect session: <code>git bisect start</code>.', 'Mark the current HEAD as broken: <code>git bisect bad</code>.', 'Mark the oldest commit as known-good: <code>git bisect good ' + GOOD_HASH + '</code>.', 'Bisect will identify the exact first bad commit — case closed!'],
-      commands: [{ cmd: 'git log', desc: 'View full commit history with hashes and messages' }, { cmd: 'git log --oneline', desc: 'Compact one-line format' }, { cmd: 'git reset --hard HEAD~N', desc: 'Move HEAD back N commits (discards changes)' }, { cmd: 'git bisect start', desc: 'Begin a binary search through commit history' }, { cmd: 'git bisect bad', desc: 'Mark current commit as containing the bug' }, { cmd: 'git bisect good &lt;hash&gt;', desc: 'Mark a known-good commit to bound the search' }],
-      tips: ['The timeline visualiser in the right panel updates live as you move HEAD.', 'HEAD~' + RESET_DEPTH + ' means "' + RESET_DEPTH + ' commits before HEAD".', 'git bisect uses binary search: it halves the search range each step.', 'The bug commit hash is <strong>' + BAD_HASH + '</strong> — visible in git log.', 'Once bisect identifies the commit, you can run git show to inspect it.'],
+      howToPlay: ['Run <code>git log</code> to inspect the commit history and identify suspicious commits.', 'Travel back in time to reaching the stable state before the corruption.', 'Start the bisect session: <code>git bisect start</code>.', 'Mark the current HEAD as broken: <code>git bisect bad</code>.', 'Mark the oldest commit as known-good: <code>git bisect good</code> with its hash.', 'Bisect will identify the exact first bad commit — case closed!'],
+      commands: [{ cmd: 'git log', desc: 'View commit history' }, { cmd: 'git log --oneline', desc: 'Compact format' }, { cmd: 'git reset --hard HEAD~N', desc: 'Move HEAD back N commits' }, { cmd: 'git bisect start', desc: 'Begin binary search through history' }, { cmd: 'git bisect bad', desc: 'Mark commit as bugged' }, { cmd: 'git bisect good &lt;hash&gt;', desc: 'Mark a known-good commit' }],
+      tips: ['The timeline visualiser in the right panel updates live as you travel.', 'HEAD~N means "N commits before HEAD".', 'git bisect uses binary search: it halves the search range each step.', 'The malicious commit and the one before it are key to solving the puzzle.', 'Once bisect identifies the commit, you can run git show to inspect it.'],
       scoring: 'Timer starts on page load. Stops when git bisect good ' + GOOD_HASH + ' is accepted and the bad commit is identified. All ' + STEPS.length + ' steps must be completed in order.',
     });
 

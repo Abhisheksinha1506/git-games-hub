@@ -365,29 +365,29 @@
         check: cmd => cmd.trim() === 'git log'
       },
       {
-        label: 'git log --author=' + CULPRIT_AUTHOR,
-        prompt: 'Filter by the suspicious author: git log --author=' + CULPRIT_AUTHOR,
-        hint: 'Type: git log --author=' + CULPRIT_AUTHOR, cmd_example: 'git log --author=' + CULPRIT_AUTHOR,
-        success_msg: `${CULPRIT_AUTHOR}'s commit narrows it down. Inspect the hash!`,
+        label: 'Filter by author',
+        prompt: 'Filter the log to show only commits by the suspicious author.',
+        hint: 'Use the --author flag with git log.', cmd_example: 'git log --author="..."',
+        success_msg: 'Filtering confirms the suspect. Now find the malicious code!',
         check: cmd => new RegExp('git log.*--author=["\']?' + CULPRIT_AUTHOR + '["\']?', 'i').test(cmd)
       },
       {
-        label: 'git blame main.py', prompt: 'Check who touched each line: git blame main.py',
-        hint: 'Type: git blame main.py', cmd_example: 'git blame main.py',
-        success_msg: `Blame output confirms: ${CULPRIT_AUTHOR} disabled the rate limiter on line 3.`,
+        label: 'git blame main.py', prompt: 'Check who touched each line of the suspicious file.',
+        hint: 'Use git blame on main.py.', cmd_example: 'git blame main.py',
+        success_msg: 'Blame output reveals exactly which line was disabled.',
         check: cmd => /git blame\s+main\.py/.test(cmd)
       },
       {
-        label: 'git show ' + CULPRIT_HASH,
-        prompt: 'Inspect the bad commit: git show ' + CULPRIT_HASH,
-        hint: 'Type: git show ' + CULPRIT_HASH, cmd_example: 'git show ' + CULPRIT_HASH,
-        success_msg: `Confirmed: ${CULPRIT_HASH} disabled RATE_LIMIT_ENABLED. Time to revert!`,
+        label: 'Inspect bad commit',
+        prompt: 'Inspect the specific commit hash where the change occurred.',
+        hint: 'Use git show with the hash you found.', cmd_example: 'git show <hash>',
+        success_msg: 'Visualizing the diff confirms the malicious intent.',
         check: cmd => new RegExp('git show\\s+' + CULPRIT_HASH).test(cmd)
       },
       {
-        label: 'git revert ' + CULPRIT_HASH,
-        prompt: 'Undo the damage: git revert ' + CULPRIT_HASH,
-        hint: 'Type: git revert ' + CULPRIT_HASH, cmd_example: 'git revert ' + CULPRIT_HASH,
+        label: 'Revert commit',
+        prompt: 'Undo the damage by reverting the malicious commit.',
+        hint: 'Use git revert with the culprit hash.', cmd_example: 'git revert <hash>',
         success_msg: 'Case closed! The bad commit has been reverted.',
         check: cmd => new RegExp('git revert\\s+' + CULPRIT_HASH).test(cmd)
       },

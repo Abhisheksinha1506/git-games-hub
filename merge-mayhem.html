@@ -392,7 +392,7 @@
       <div class="conflict-zone" id="conflict-zone">
         <div style="margin:auto;text-align:center;color:#ffffff;font-size:11px;line-height:2.2;">
           No active conflicts.<br>
-          <span style="color:var(--amber);">git merge feature-branch</span><br>to start Wave 1.
+          Run the correct merge command to start Wave 1.
         </div>
       </div>
 
@@ -433,12 +433,12 @@
 
     // Steps: one per wave — generated from WAVES (no hardcoded branch names)
     const STEPS = WAVES.map((w, i) => ({
-      label: 'Wave ' + (i + 1) + ': git merge ' + w.branch,
-      prompt: 'Merge the branch: git merge ' + w.branch,
-      hint: 'Type: git merge ' + w.branch,
-      cmd_example: 'git merge ' + w.branch,
+      label: 'Wave ' + (i + 1),
+      prompt: 'Merge the incoming branch for Wave ' + (i + 1),
+      hint: 'Check your branch list or the graph to find the branch name.',
+      cmd_example: 'git merge <branch>',
       success_msg: 'Merge started! Resolve the ' + w.conflicts.length + ' conflicts in the panel.',
-      wrong_msg: 'Wrong branch name. You need: git merge ' + w.branch,
+      wrong_msg: 'That branch does not exist or is not the one you need to merge now.',
       check: cmd => cmd.trim() === 'git merge ' + w.branch,
     }));
 
