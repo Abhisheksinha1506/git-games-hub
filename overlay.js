@@ -456,16 +456,8 @@ window.GitOverlay = (function () {
             <div class="go-lb-loading">⏳ Loading leaderboard…</div>
           </div>
           <div class="go-lb-howto">
-            <strong>How to get on this board:</strong><br>
-            1. Complete the game → click <strong>COPY SCORE</strong> in the completion modal.<br>
-            2. Copy the markdown score row shown.<br>
-            3. Open a PR on branch <strong>score-entry/your-username</strong> and paste it into README.md.<br>
-            4. Once merged, the leaderboard updates automatically.<br>
             <a class="go-lb-source-link" id="go-readme-link" href="#" target="_blank" rel="noopener">
               📄 View README leaderboard on GitHub ↗
-            </a>
-            <a class="go-lb-source-link" id="go-submit-link" href="#" target="_blank" rel="noopener">
-              🚀 Submit your score via PR ↗
             </a>
           </div>
         </div>
